@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.Model.UsableTimeItem;
@@ -37,14 +38,18 @@ import static maes.tech.intentanim.CustomIntent.customType;
 public class LoadingActivity extends AppCompatActivity {
     private boolean goToBatHealhAct=false;
     private ArrayList<UsableTimeItem> list;
+    private LoadingView loadingView;
+    TextView message;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
         list=new ArrayList<>();
         SetUpStatusBar();
-        LoadingView loadingView=findViewById(R.id.loading_view);
+        loadingView=findViewById(R.id.loading_view);
+        message=findViewById(R.id.messageLoading);
         loadingView.setCircleColors(Color.BLACK,Color.BLUE,Color.GREEN);
+
         GetBatteryStat();
         ListToSharePreference();
         ActivityNavigate();
@@ -73,6 +78,8 @@ public class LoadingActivity extends AppCompatActivity {
                     intent.putExtra("remainingBattery", estimated);
                     startActivity(intent);
                     customType(LoadingActivity.this,"bottom-to-up");
+                    loadingView.setVisibility(View.GONE);
+                    message.setText("Done !");
                     finish();
                 }
 
