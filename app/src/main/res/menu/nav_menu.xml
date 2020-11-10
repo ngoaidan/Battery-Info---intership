@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Home"
+        app:cnb_iconColor="#4CAF50"
+        app:cnb_textColor="#4CAF50"
+        app:cnb_backgroundColor="#1D1C1C"
+        />
+    <item
+        android:id="@+id/differences"
+        android:icon="@drawable/ic_toc_black_24dp"
+        android:title="Others"
+        app:cnb_iconColor="#4CAF50"
+        app:cnb_textColor="#4CAF50"
+        app:cnb_backgroundColor="#1D1C1C"
+       />
+    <item
+        android:id="@+id/setting"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="About"
+        app:cnb_iconColor="#4CAF50"
+        app:cnb_textColor="#4CAF50"
+        app:cnb_backgroundColor="#1D1C1C"
+        />
+
+</menu>

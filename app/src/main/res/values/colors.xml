@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorBackground">#131313</color>
+    <color name="colorGreenLight"> #00c460</color>
+    <color name="white"> #fff</color>
+    <color name="black"> #000</color>
+    <color name="textPink">#727376</color>
+    <color name="batteryStatus">#D9E4E4</color>
+    <color name="batteryStatusResult">#C2D7D8</color>
+    <color name="lightBlue">#00BCD4</color>
+    <color name="usableThingName">#B4BABB</color>
+    <color name="progressBarStartColor">#8BC34A</color>
+    <color name="progressBarEndColor">#535151</color>
+
+
+</resources>
