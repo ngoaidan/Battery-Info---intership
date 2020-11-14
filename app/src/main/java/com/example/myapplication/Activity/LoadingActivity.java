@@ -49,10 +49,40 @@ public class LoadingActivity extends AppCompatActivity {
         loadingView=findViewById(R.id.loading_view);
         message=findViewById(R.id.messageLoading);
         loadingView.setCircleColors(Color.BLACK,Color.BLUE,Color.GREEN);
-
+        ArrayList<Integer> list=new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(4);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        Integer x=4;
+        ArrayList<Integer> result=getListOfIndex(list,x);
+        for(int i=0;i<result.size();i++) Log.d("banabatest",result.get(i)+"\n");
+        PrintIndex(list,x);
         GetBatteryStat();
         ListToSharePreference();
         ActivityNavigate();
+
+
+    }
+    ArrayList<Integer> getListOfIndex(ArrayList<Integer> list,Integer x){
+        ArrayList<Integer> result=new ArrayList<>();
+        int j=0;
+        for(int i=list.size()-1;i>=0;i--)
+        {
+            if(list.get(i)==x) result.add(j);
+            j++;
+        }
+        return result;
+
+    }
+    void PrintIndex (ArrayList<Integer> list,Integer x){
+        for(int i=0;i<list.size()-1;i++)
+        {
+            if(list.get(i)==x) Log.d("indexResult",list.size()-1-i+"\n");
+        }
+
     }
 
     private void ListToSharePreference() {
@@ -190,5 +220,19 @@ public class LoadingActivity extends AppCompatActivity {
         }
         list.remove(list.size()-1);
 
+    }
+    private ArrayList<Integer> getResult(ArrayList<Integer> lista, ArrayList<Integer> listb)
+    {
+        Log.d("size",lista.size()+"");
+        ArrayList<Integer> result=new ArrayList<>();
+        for (int i=0;i<lista.size();i++)
+        {
+            Log.d("lista",""+lista.get(i));
+            if(!listb.contains(lista.get(i)))
+
+             result.add(lista.get(i));
+
+        }
+        return  result;
     }
 }

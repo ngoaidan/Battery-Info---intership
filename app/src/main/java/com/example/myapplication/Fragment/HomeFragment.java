@@ -88,11 +88,19 @@ public class HomeFragment extends Fragment {
       //Get battery level
       list=new ArrayList<>();
       GetBatteryInfo();
+      GetSystemInfo();
 
       return view;
     }
 
+  private void GetSystemInfo() {
+    ShellExecuter exe = new ShellExecuter();
+    String command = "ls";
 
+    String outp = exe.Executer(command);
+
+    Log.d("Output", outp);
+  }
 
 
   private void GetBatteryInfo() {
