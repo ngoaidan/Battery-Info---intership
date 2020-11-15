@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -41,13 +42,20 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import static maes.tech.intentanim.CustomIntent.customType;
 
@@ -62,15 +70,9 @@ public class HomeFragment extends Fragment {
   TextView remainingTime;
   private  boolean returnFragment=false;
 
-  public HomeFragment(int lastBatteryEnergy) {
 
-    this.lastBatteryEnergy = lastBatteryEnergy;
-  }
 
-  public HomeFragment(boolean returnFragment) {
 
-    this.returnFragment = returnFragment;
-  }
 
   @Nullable
     @Override
@@ -82,28 +84,62 @@ public class HomeFragment extends Fragment {
       value=view.findViewById(R.id.progressValue);
       recyclerView=view.findViewById(R.id.recyclerView);
       remainingTime=view.findViewById(R.id.remainingTime);
+
       //setup list usable item
       AddItemToList();
       SetUpList();
       //Get battery level
       list=new ArrayList<>();
       GetBatteryInfo();
-      GetSystemInfo();
+
+    try {
+      Map<String, String> getCPUInfo=getCPUInfo();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
       return view;
     }
 
-  private void GetSystemInfo() {
-    ShellExecuter exe = new ShellExecuter();
-    String command = "ls";
 
-    String outp = exe.Executer(command);
+  public static Map<String, String> getCPUInfo () throws IOException {
 
-    Log.d("Output", outp);
+    BufferedReader br = new BufferedReader (new FileReader("/proc/cpuinfo"));
+
+    String str;
+
+    Map<String, String> output = new HashMap<>();
+
+    while ((str = br.readLine ()) != null) {
+
+      String[] data = str.split (":");
+
+      if (data.length > 1) {
+
+        String key = data[0].trim ().replace (" ", "_");
+        if (key.equals ("model_name")) key = "cpu_model";
+
+        { output.put (key, data[1].trim ());
+          Log.d("processsor",data[1].trim()+"");
+        }
+
+      }
+
+    }
+
+    br.close ();
+
+    return output;
+
   }
 
 
   private void GetBatteryInfo() {
+    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+    returnFragment=sharedPrefs.getBoolean("returnFragment",false);
+    lastBatteryEnergy=sharedPrefs.getInt("lastBattery",0);
+    Log.d("lastbattey",""+lastBatteryEnergy);
     Intent batteryStatus = getContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     int batteryLevel=0;
     batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
@@ -113,6 +149,7 @@ public class HomeFragment extends Fragment {
     circularProgressBar.setProgress((float)batteryLevel);
     SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0);
     if(returnFragment==true) {
+
       String estimateTime=pref.getString("prefTime", "Unknown");
       if(!estimateTime.isEmpty())
       remainingTime.setText(estimateTime);
@@ -141,6 +178,7 @@ public class HomeFragment extends Fragment {
      else{
        editor.putString("prefTime","");
        editor.commit();
+
      }
     }
 

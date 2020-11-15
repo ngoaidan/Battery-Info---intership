@@ -29,6 +29,8 @@ import com.example.myapplication.R;
 
 import java.util.ArrayList;
 
+import static maes.tech.intentanim.CustomIntent.customType;
+
 public class BatteryHealthActivity extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -87,6 +89,7 @@ public class BatteryHealthActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                customType(BatteryHealthActivity.this,"right-to-left");
             }
         });
     }

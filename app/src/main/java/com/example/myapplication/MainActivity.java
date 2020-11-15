@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         navigationBar=findViewById(R.id.bottom_menu);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameContainer, new HomeFragment(lastBatteryEnnergy));
+        transaction.replace(R.id.frameContainer, new HomeFragment());
         transaction.addToBackStack(null);
         transaction.commit();
         navigationBar.setItemSelected(R.id.home,true);
@@ -38,7 +40,11 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment=null;
                 switch(i){
                     case R.id.home:
-                        fragment=new HomeFragment(true);
+                        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        SharedPreferences.Editor editor = sharedPrefs.edit();
+                        editor.putBoolean("returnFragment",true);
+                        editor.commit();
+                        fragment=new HomeFragment();
                         break;
                     case R.id.differences:
                         fragment=new DifferenceFragment();

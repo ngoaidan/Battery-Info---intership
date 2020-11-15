@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.usage.StorageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -18,6 +19,7 @@ import android.os.StatFs;
 import android.os.SystemClock;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.text.format.Formatter;
 import android.util.DisplayMetrics;
@@ -46,6 +48,8 @@ import com.example.myapplication.Model.PhoneInfoItem;
 import com.example.myapplication.R;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -77,33 +81,25 @@ public class DifferenceFragment extends Fragment {
         rvHardWare=view.findViewById(R.id.rvHardware);
         phoneModel=view.findViewById(R.id.phoneMode);
         osVersion=view.findViewById(R.id.osVersion);
-        phoneModel.setText("Android "+getDeviceName());
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        phoneModel.setText(sharedPrefs.getString("deviceName","Unknown"));
         osVersion.setText("Android "+GetAndroidVersion());
-        screenSize.setText(getDisplaySize((Activity) getContext()));
-        resolutionInfo.setText(getScreenResolution(getContext()));
+        screenSize.setText(sharedPrefs.getString("Dislay","0")+"IN");
+        resolutionInfo.setText(sharedPrefs.getString("screenResolution","Unknown"));
+        cameraSize.setText(sharedPrefs.getString("cameraResolution","Unknown"));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             showStorageVolumes();
         }
-        Log.d("navigate",""+getNavBarHeight(getContext()));
-        getBackCameraResolutionInMp();
+
+
         SetUpBasicInfo();
         SetUpHardWareInfo();
+
         GetAndroidVersion();
         return view;
     }
 
-    private String getScreenResolution(Context context)
-    {
-        DisplayMetrics metrics;
-        int width = 0, height = 0;
-        metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        height = Math.min(metrics.widthPixels, metrics.heightPixels); //height
-        width = Math.max(metrics.widthPixels, metrics.heightPixels); //
-
-        return "" + height + "*" + (width+getNavBarHeight(getContext())) + "";
-    }
     private String GetAndroidVersion() {
         String versionRelease = Build.VERSION.RELEASE;
 
@@ -111,7 +107,7 @@ public class DifferenceFragment extends Fragment {
     }
 
     private void SetUpBasicInfo() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
         long dateInMillis=java.lang.System.currentTimeMillis() - android.os.SystemClock.elapsedRealtime();
         String dateString = formatter.format(new Date(dateInMillis));
         Log.d("last boot", SystemClock.elapsedRealtime()+"");
@@ -124,6 +120,7 @@ public class DifferenceFragment extends Fragment {
         rvBasic.setAdapter(adapter);
         rvBasic.setNestedScrollingEnabled(false);
     }
+
     private String getRunningTime(long timeInMilliSeconds){
         long seconds = timeInMilliSeconds / 1000;
         long minutes = seconds / 60;
@@ -133,49 +130,20 @@ public class DifferenceFragment extends Fragment {
          return time;
     }
     private void SetUpHardWareInfo() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         hardWareList=new ArrayList<>();
-        hardWareList.add(new PhoneInfoItem("Last boot","2020-11-08"));
-        hardWareList.add(new PhoneInfoItem("Running Time","3d, 14h, 56 m, 18s"));
-        hardWareList.add(new PhoneInfoItem("Last boot","2020-11-08"));
-        hardWareList.add(new PhoneInfoItem("Running Time","3d, 14h, 56 m, 18s"));
-        hardWareList.add(new PhoneInfoItem("Last boot","2020-11-08"));
-        hardWareList.add(new PhoneInfoItem("Running Time","3d, 14h, 56 m, 18s"));
+        hardWareList.add(new PhoneInfoItem("CPU",sharedPrefs.getString("cpuName","Unknown")));
+        hardWareList.add(new PhoneInfoItem("Cores",sharedPrefs.getString("cpuCore","Unknown")));
+        hardWareList.add(new PhoneInfoItem("RAM",sharedPrefs.getString("ramSize","Unknown")+" GB"));
+        hardWareList.add(new PhoneInfoItem("Internal Storage",TotalandFree));
         PhoneInfoAdapter adapter=new PhoneInfoAdapter(hardWareList,getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         rvHardWare.setLayoutManager(mLayoutManager);
         rvHardWare.setAdapter(adapter);
         rvHardWare.setNestedScrollingEnabled(false);
     }
-    private String getDisplaySize(Activity activity) {
-        double x = 0, y = 0;
-        int mWidthPixels, mHeightPixels;
-        try {
-            WindowManager windowManager = activity.getWindowManager();
-            Display display = windowManager.getDefaultDisplay();
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            display.getMetrics(displayMetrics);
-            Point realSize = new Point();
-            Display.class.getMethod("getRealSize", Point.class).invoke(display, realSize);
-            mWidthPixels = realSize.x;
-            mHeightPixels = realSize.y;
-            DisplayMetrics dm = new DisplayMetrics();
-            activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-            x = Math.pow(mWidthPixels / dm.xdpi, 2);
-            y = Math.pow(mHeightPixels / dm.ydpi, 2);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return String.format(Locale.US, "%.2f", Math.sqrt(x + y));
-    }
-    public static String getDeviceName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        if (model.startsWith(manufacturer)) {
-            return model.toUpperCase();
-        }
-        return ((manufacturer) + " " + model).toUpperCase();
-    }
+   private String TotalandFree="";
     //Lấy giá các giá trị của internal/external storage
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void showStorageVolumes() {
@@ -200,6 +168,8 @@ public class DifferenceFragment extends Fragment {
                 result=(double)(storageStatsManager.getTotalBytes(uuid)-storageStatsManager.getFreeBytes(uuid))*100/storageStatsManager.getTotalBytes(uuid);
                 Log.d("result",""+result);
                 remain=storageStatsManager.getFreeBytes(uuid);
+                TotalandFree=Formatter.formatShortFileSize(getContext(), storageStatsManager.getFreeBytes(uuid))+" free\n"+
+                        Formatter.formatShortFileSize(getContext(), storageStatsManager.getTotalBytes(uuid))+" total";
             } catch (Exception e) {
                 // IGNORED
             }
@@ -211,90 +181,8 @@ public class DifferenceFragment extends Fragment {
         remainSize.setText(Formatter.formatShortFileSize(getContext(), remain));
     }
 
-    //Lấy chiều dài chiều rộng của Camera
-    public float getBackCameraResolutionInMp()
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getContext().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] {Manifest.permission.CAMERA}, 1);
-            }
-        }
-        int noOfCameras = Camera.getNumberOfCameras();
-        float maxResolution1 = -1;
-        float maxResolution2=-1;
-        long pixelCount = -1;
-        Log.d("num camera",noOfCameras+"");
-        for (int i = 0;i < noOfCameras;i++)
-        {
-            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, cameraInfo);
-
-            if (i==0)
-            {
-                Camera camera = Camera.open(i);;
-                Camera.Parameters cameraParams = camera.getParameters();
-                for (int j = 0;j < cameraParams.getSupportedPictureSizes().size();j++)
-                {
-                    long pixelCountTemp = cameraParams.getSupportedPictureSizes().get(j).width * cameraParams.getSupportedPictureSizes().get(j).height; // Just changed i to j in this loop
-                    if (pixelCountTemp > pixelCount)
-                    {
-                        pixelCount = pixelCountTemp;
-                        maxResolution1 = ((float)pixelCountTemp) / (1024000.0f);
-
-                        Log.d("camera",Math.round(maxResolution1)+"");
-                    }
-                }
-               pixelCount = -1;
-                camera.release();
-            }else if (i==1)
-            {
-
-                Camera camera = Camera.open(i);
-                Camera.Parameters cameraParams = camera.getParameters();
-                for (int j = 0;j < cameraParams.getSupportedPictureSizes().size();j++)
-                {
-                    Log.d("camera front",cameraParams.getSupportedPictureSizes().size()+"");
-                    long pixelCountTemp = cameraParams.getSupportedPictureSizes().get(j).width * cameraParams.getSupportedPictureSizes().get(j).height; // Just changed i to j in this loop
-                    if (pixelCountTemp > pixelCount)
-                    {
-                        pixelCount = pixelCountTemp;
-                        maxResolution2 = ((float)pixelCountTemp) / (1024000.0f);
 
 
-                    }
-                }
-
-                camera.release();
-            }
-
-            cameraSize.setText(((int)(maxResolution1)+1)+"MP+"+((int)(maxResolution2)+1)+"MP");
-        }
-
-        return 0;
-    }
-    public int getNavBarHeight(Context c) {
-        int result = 0;
-        boolean hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey();
-        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-
-        if(!hasMenuKey && !hasBackKey) {
-            //The device has a navigation bar
-            Resources resources = c.getResources();
-
-            int orientation = resources.getConfiguration().orientation;
-            int resourceId;
-            if (isTablet(c)){
-                resourceId = resources.getIdentifier(orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape", "dimen", "android");
-            }  else {
-                resourceId = resources.getIdentifier(orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_width", "dimen", "android");
-            }
-
-            if (resourceId > 0) {
-                return resources.getDimensionPixelSize(resourceId);
-            }
-        }
-        return result;
-    }
     private boolean isTablet(Context c) {
         return (c.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
