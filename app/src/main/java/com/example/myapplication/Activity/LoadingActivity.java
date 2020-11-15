@@ -76,6 +76,7 @@ public class LoadingActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //check xem usage stats có được quyền truy cập hay không
                 AppOpsManager appOps = (AppOpsManager)LoadingActivity.this.getSystemService(Context.APP_OPS_SERVICE);
                 int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
                         android.os.Process.myUid(), LoadingActivity.this.getPackageName());
@@ -85,6 +86,7 @@ public class LoadingActivity extends AppCompatActivity {
                 } else {
                     granted = (mode == AppOpsManager.MODE_ALLOWED);
                 }
+                //
                 if( granted==true)
                 {
                     GetCameraPermission();
@@ -94,11 +96,12 @@ public class LoadingActivity extends AppCompatActivity {
                     GetBatteryStat();
                     ListToSharePreference();
                     ActivityNavigate();
-                    GetCPUInfo();
-                    GetCoreInfo("/sys/devices/system/cpu/present");
-                    GetRamSize();
-                    GetDeviceName();
-                    getDisplaySize(LoadingActivity.this);
+                    //lấy các tông tin bên dưới lưu vào share preference để main activity gọi ra
+                    GetCPUInfo();//lấy tên model của cpu
+                    GetCoreInfo("/sys/devices/system/cpu/present");//lấy số lượng core
+                    GetRamSize();//lấy total size của ram
+                    GetDeviceName();//lấy tên model của điện thoại
+                    getDisplaySize(LoadingActivity.this);//lấy dislay của diện thoại dơn vị là inch
                     getScreenResolution(LoadingActivity.this);
                     getBackCameraResolutionInMp();
                 } else {
