@@ -3,7 +3,7 @@ package com.example.myapplication.Activity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
+
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,14 +16,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
+
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Point;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
+
 import android.hardware.Camera;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -50,7 +48,7 @@ import com.example.myapplication.Model.ShellExecuter;
 import com.example.myapplication.Model.UsableTimeItem;
 import com.example.myapplication.R;
 import com.google.gson.Gson;
-import com.yanzhenjie.loading.LoadingView;
+
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -60,7 +58,7 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
 
 
 
@@ -83,6 +81,7 @@ public class LoadingActivity extends AppCompatActivity {
         SetUpStatusBar();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Hook();
+        GetUsagePermission();
         loadingView.setTextSize(25);
         loadingView.setPadding(10,10,10,10);
         loadingView.setPaddingRelative(10,10,10,10);
