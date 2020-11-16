@@ -5,13 +5,16 @@ import android.app.Activity;
 import android.app.usage.StorageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,6 +47,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Adapter.PhoneInfoAdapter;
+import com.example.myapplication.Model.BatteryHealthItem;
 import com.example.myapplication.Model.PhoneInfoItem;
 import com.example.myapplication.R;
 
@@ -61,9 +65,10 @@ import java.util.UUID;
 
 public class DifferenceFragment extends Fragment {
     TextView phoneModel,useSize,remainSize,screenSize,resolutionInfo,cameraSize,osVersion;
-    RecyclerView rvBasic,rvHardWare;
+    RecyclerView rvBasic,rvHardWare,rvBattery;
     ArrayList<PhoneInfoItem> list;
     ArrayList<PhoneInfoItem> hardWareList;
+    ArrayList<PhoneInfoItem> batteryList;
     StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
     StorageManager mStorageManager;
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -81,6 +86,7 @@ public class DifferenceFragment extends Fragment {
         rvHardWare=view.findViewById(R.id.rvHardware);
         phoneModel=view.findViewById(R.id.phoneMode);
         osVersion=view.findViewById(R.id.osVersion);
+        rvBattery=view.findViewById(R.id.rvBattery);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         phoneModel.setText(sharedPrefs.getString("deviceName","Unknown"));
         osVersion.setText("Android "+GetAndroidVersion());
@@ -94,7 +100,7 @@ public class DifferenceFragment extends Fragment {
 
         SetUpBasicInfo();
         SetUpHardWareInfo();
-
+        SetUpBatteryList();
         GetAndroidVersion();
         return view;
     }
@@ -132,7 +138,9 @@ public class DifferenceFragment extends Fragment {
     private void SetUpHardWareInfo() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         hardWareList=new ArrayList<>();
-        hardWareList.add(new PhoneInfoItem("CPU",sharedPrefs.getString("cpuName","Unknown")));
+        String cpuName=sharedPrefs.getString("cpuName","Unknown");
+        if(!cpuName.isEmpty()) hardWareList.add(new PhoneInfoItem("CPU",cpuName));
+
         hardWareList.add(new PhoneInfoItem("Cores",sharedPrefs.getString("cpuCore","Unknown")));
         hardWareList.add(new PhoneInfoItem("RAM",sharedPrefs.getString("ramSize","Unknown")+" GB"));
         hardWareList.add(new PhoneInfoItem("Internal Storage",TotalandFree));
@@ -181,7 +189,58 @@ public class DifferenceFragment extends Fragment {
         remainSize.setText(Formatter.formatShortFileSize(getContext(), remain));
     }
 
+    private void SetUpBatteryList() {
+        batteryList=new ArrayList<>();
+        Intent batteryStatus =getContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int batteryHealth=0;
+        String health="";
+        int batteryState=0;
+        int voltag=0,temperature=0,size=0;
+        long estimated=0;
+        //Battery Health
+        batteryHealth=batteryStatus.getIntExtra(BatteryManager.EXTRA_HEALTH,batteryHealth);
+        if(batteryHealth==1) health="UNKNOWN";
+        if(batteryHealth==2) health="GOOD";
+        if(batteryHealth==3) health="OVERHEAT";
+        if(batteryHealth==4) health="DEAD";
+        if(batteryHealth==5) health="OVER VOLTAGE";
+        if(batteryHealth==6) health="UNSPECIFIED FAILURE";
 
+
+        BatteryManager mBatteryManager = (BatteryManager)getContext().getSystemService(Context.BATTERY_SERVICE);
+
+        //Battery Status
+        batteryState=batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS,batteryHealth);
+        String status="";
+        if(batteryState==1) status="Unknown";
+        if(batteryState==2) status="Charging";
+        if(batteryState==3) status="Discharging";
+        if(batteryState==4) status="Not charging";
+        if(batteryState==5) status="FULL";
+        //Battery Size
+
+        //battery Estimated
+        long remainingPercent=mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+
+
+
+
+        //Battery Voltage
+        voltag=batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE,voltag);
+        //Battery Temperature
+        temperature=batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,temperature);
+        batteryList.add(new PhoneInfoItem("Battery status",status));
+        batteryList.add(new PhoneInfoItem("Level",remainingPercent+"%"));
+        batteryList.add(new PhoneInfoItem("Temperature",temperature/10-17+""+'\u00B0'+"C"));
+        batteryList.add(new PhoneInfoItem("Voltage",(float)voltag/1000+"V"));
+
+        PhoneInfoAdapter adapter=new PhoneInfoAdapter(batteryList,getContext());
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
+        rvBattery.setLayoutManager(mLayoutManager);
+        rvBattery.setAdapter(adapter);
+        rvBattery.setNestedScrollingEnabled(false);
+    }
 
     private boolean isTablet(Context c) {
         return (c.getResources().getConfiguration().screenLayout

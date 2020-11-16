@@ -228,9 +228,26 @@
         android:layout_marginBottom="20dp"
         />
     <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Hardware"
+    android:textSize="15dp"
+    android:textColor="@color/usableThingName"
+    android:layout_marginLeft="20dp"
+    android:layout_marginBottom="10dp"
+    />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rvHardware"
+        android:background="@drawable/phone_info_border"
+        android:paddingLeft="20dp"
+        android:layout_marginBottom="20dp"
+        />
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hardware"
+        android:text="Battery Information"
         android:textSize="15dp"
         android:textColor="@color/usableThingName"
         android:layout_marginLeft="20dp"
@@ -239,7 +256,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rvHardware"
+        android:id="@+id/rvBattery"
         android:background="@drawable/phone_info_border"
         android:paddingLeft="20dp"
         android:layout_marginBottom="20dp"

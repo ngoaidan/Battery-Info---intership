@@ -150,7 +150,6 @@ public class BatteryHealthActivity extends AppCompatActivity {
         voltag=batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE,voltag);
         //Battery Temperature
         temperature=batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,temperature);
-
         list.add(new BatteryHealthItem("Battery Health",health));
         list.add(new BatteryHealthItem("Estimated",estimated/1000+"mAh"));
         list.add(new BatteryHealthItem("Charge state",status));

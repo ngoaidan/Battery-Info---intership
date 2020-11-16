@@ -104,6 +104,7 @@ public class LoadingActivity extends AppCompatActivity {
                     getDisplaySize(LoadingActivity.this);//lấy dislay của diện thoại dơn vị là inch
                     getScreenResolution(LoadingActivity.this);
                     getBackCameraResolutionInMp();
+                    GetBatteryName();
                 } else {
                     Toast.makeText(LoadingActivity.this, "Cần cấp quyền cho ứng dụng để tiếp tực", Toast.LENGTH_SHORT).show();
                     GetUsagePermission();
@@ -225,6 +226,12 @@ public class LoadingActivity extends AppCompatActivity {
         String formatted = df.format(result);
         editor.putString("ramSize",formatted);
         editor.commit();
+    }
+    private void GetBatteryName(){
+        ShellExecuter exe = new ShellExecuter();
+        String command = "ls /proc/";
+        String outp = exe.Executer(command);
+        Log.d("banaba",outp);
     }
 
     //Lấy chiều dài chiều rộng của Camera
@@ -359,15 +366,22 @@ public class LoadingActivity extends AppCompatActivity {
         String [] spiltString=outp.split(":");
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPrefs.edit();
-
+        Log.d("kq",outp);
         String result=spiltString[spiltString.length-1];
-        String []arrayResult= result.split("\n");
-        result=arrayResult[0];
+        result=result;
+        result.replace(" ","");
+        result.replace("\n","");
+        String t="\n abcdc123";
+        t=result.replace("\n", "").replace("\r", "");
+        boolean atleastOneAlpha = t.matches(".*[a-zA-Z]+.*");
+        Log.d("kq",result+atleastOneAlpha+"");
 
-        editor.putString("cpuName",result);
+        if(atleastOneAlpha)
+        editor.putString("cpuName",t);
+        else editor.putString("cpuName","");
 
         editor.commit();
-        Log.d("kq",result);
+
 
     }
 
