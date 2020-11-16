@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
         android:padding="10dp"
+        android:id="@+id/ad_bar"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
@@ -32,43 +33,43 @@
             android:layout_alignParentEnd="true"
             />
     </RelativeLayout>
-    <com.yanzhenjie.loading.LoadingView
-        android:id="@+id/loading_view"
-        android:layout_width="350dp"
-        android:visibility="gone"
-        android:layout_centerInParent="true"
-        android:layout_height="300dp" />
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:visibility="gone"
-        android:id="@+id/cardViewMessage"
-        app:cardBackgroundColor="@color/colorBackground"
-        android:elevation="0dp"
-        android:layout_centerInParent="true"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Analysing..."
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            android:id="@+id/messageLoading"
-            android:layout_below="@+id/loading_view"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_below="@+id/ad_bar"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:gravity="center_horizontal"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:src="@drawable/batteryimage"
             android:layout_centerInParent="true"
+            android:id="@+id/battery_image"
             />
-    </androidx.cardview.widget.CardView>
-    <Button
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/starButton"
-        android:layout_below="@+id/loading_view"
-        android:background="@drawable/custom_buttom"
-        android:textColor="#fff"
-        android:textSize="20dp"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        />
+        <com.dx.dxloadingbutton.lib.LoadingButton
+            android:id="@+id/loading_view"
+            android:layout_margin="20dp"
+            android:layout_width="300dp"
+            android:padding="20dp"
+            android:layout_centerInParent="true"
+            android:layout_height="60dp"
+            app:lb_resetAfterFailed="true"
+            app:lb_btnRippleColor="#131313"
+            app:lb_btnDisabledColor="#cccccc"
+            app:lb_disabledTextColor="#999999"
+            app:lb_cornerRadius="20dp"
+            app:lb_rippleEnable="true"
+
+            app:lb_btnText="Start"
+            android:layout_below="@+id/battery_image"
+
+            />
+
+    </LinearLayout>
+
+
+
 
 
 </RelativeLayout>

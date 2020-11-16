@@ -3,6 +3,7 @@ package com.example.myapplication.Activity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
@@ -15,8 +16,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Point;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -37,6 +44,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dx.dxloadingbutton.lib.LoadingButton;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.Model.ShellExecuter;
 import com.example.myapplication.Model.UsableTimeItem;
@@ -54,12 +62,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+
+
 import static maes.tech.intentanim.CustomIntent.customType;
 
 public class LoadingActivity extends AppCompatActivity {
     private boolean goToBatHealhAct=false;
     private ArrayList<UsableTimeItem> list;
-    private LoadingView loadingView;
+    private LoadingButton loadingView;
     TextView message;
     Button startButton;
     CardView cardview;
@@ -73,10 +83,14 @@ public class LoadingActivity extends AppCompatActivity {
         SetUpStatusBar();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Hook();
-        startButton.setOnClickListener(new View.OnClickListener() {
+        loadingView.setTextSize(25);
+        loadingView.setPadding(10,10,10,10);
+        loadingView.setPaddingRelative(10,10,10,10);
+        loadingView.setBackgroundShader(new LinearGradient(0f,0f,1000f,100f, 0xAAE53935, 0xAAFF5722, Shader.TileMode.CLAMP));
+        loadingView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //check xem usage stats có được quyền truy cập hay không
+                loadingView.startLoading();
                 AppOpsManager appOps = (AppOpsManager)LoadingActivity.this.getSystemService(Context.APP_OPS_SERVICE);
                 int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
                         android.os.Process.myUid(), LoadingActivity.this.getPackageName());
@@ -90,9 +104,7 @@ public class LoadingActivity extends AppCompatActivity {
                 if( granted==true)
                 {
                     GetCameraPermission();
-                    startButton.setVisibility(View.GONE);
-                    loadingView.setVisibility(View.VISIBLE);
-                    cardview.setVisibility(View.VISIBLE);
+
                     GetBatteryStat();
                     ListToSharePreference();
                     ActivityNavigate();
@@ -110,18 +122,16 @@ public class LoadingActivity extends AppCompatActivity {
                     GetUsagePermission();
 
                 }
-
             }
         });
+
 
     }
 
     private void Hook() {
         loadingView=findViewById(R.id.loading_view);
-        message=findViewById(R.id.messageLoading);
-        startButton=findViewById(R.id.starButton);
-        cardview=findViewById(R.id.cardViewMessage);
-        loadingView.setCircleColors(Color.BLACK,Color.BLUE,Color.GREEN);
+       // startButton=findViewById(R.id.starButton);
+
     }
 
     private void GetCameraPermission() {
@@ -343,6 +353,8 @@ public class LoadingActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                   // loadingView.doneLoadingAnimation(Color.parseColor("#666666"),BitmapFactory.decodeResource(getResources(),R.drawable.ic_play_circle_outline_black_24dp));
+                    loadingView.loadingSuccessful();
                     SharedPreferences.Editor editor = sharedPrefs.edit();
                     Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
                     editor.putInt("lastBattery",estimated);
@@ -350,8 +362,9 @@ public class LoadingActivity extends AppCompatActivity {
                     editor.commit();
                     startActivity(intent);
                     customType(LoadingActivity.this,"bottom-to-up");
-                    loadingView.setVisibility(View.GONE);
-                    message.setText("Done !");
+
+
+
                     finish();
                 }
 
