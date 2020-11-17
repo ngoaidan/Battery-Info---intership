@@ -14,6 +14,8 @@
     <color name="usableThingName">#B4BABB</color>
     <color name="progressBarStartColor">#8BC34A</color>
     <color name="progressBarEndColor">#535151</color>
+    <color name="cell_border">#3F51B5</color>
+    <color name="cell_solid">#C6E5E9</color>
 
 
 </resources>

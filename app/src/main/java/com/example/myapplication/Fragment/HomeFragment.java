@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Activity.BatteryHealthActivity;
+import com.example.myapplication.Activity.CellMapActivity;
 import com.example.myapplication.Activity.LoadingActivity;
 import com.example.myapplication.Adapter.UsableTimeAdapter;
 import com.example.myapplication.Model.ShellExecuter;
@@ -211,7 +212,7 @@ public class HomeFragment extends Fragment {
     circularProgressBar.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Intent intent=new Intent(getContext(), BatteryHealthActivity.class);
+        Intent intent=new Intent(getContext(), CellMapActivity.class);
         intent.putExtra("goToBatHealth",true);
         startActivity(intent);
         customType(getContext(),"left-to-right");
