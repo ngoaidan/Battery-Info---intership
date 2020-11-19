@@ -121,7 +121,7 @@ public class HomeFragment extends Fragment {
         if (key.equals ("model_name")) key = "cpu_model";
 
         { output.put (key, data[1].trim ());
-          Log.d("processsor",data[1].trim()+"");
+
         }
 
       }
@@ -140,7 +140,7 @@ public class HomeFragment extends Fragment {
 
     returnFragment=sharedPrefs.getBoolean("returnFragment",false);
     lastBatteryEnergy=sharedPrefs.getInt("lastBattery",0);
-    Log.d("lastbattey",""+lastBatteryEnergy);
+
     Intent batteryStatus = getContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     int batteryLevel=0;
     batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
@@ -191,7 +191,7 @@ public class HomeFragment extends Fragment {
     String json = sharedPrefs.getString("usageStats", "");
     Type type = new TypeToken<List<UsableTimeItem>>() {}.getType();
     list = gson.fromJson(json, type);
-    Log.d("listsize",list.size()+"");
+
   }
 
   private void SetUpList() {

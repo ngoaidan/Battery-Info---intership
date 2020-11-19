@@ -84,6 +84,13 @@ public class CellMapActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacksAndMessages(null);
+    }
+
     private void ActionToolBar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -143,7 +150,7 @@ public class CellMapActivity extends AppCompatActivity {
     }
 
     private void ShowDialog() {
-        android.app.AlertDialog.Builder  mbuilder=new AlertDialog.Builder(CellMapActivity.this);
+        android.app.AlertDialog.Builder  mbuilder=new AlertDialog.Builder(CellMapActivity.this,R.style.CustomAlertDialog);
         View view=getLayoutInflater().inflate(R.layout.cell_dialog,null);
         TextView tvHealth,tvLow,tvInactive;
         LoadingButton btnDone;

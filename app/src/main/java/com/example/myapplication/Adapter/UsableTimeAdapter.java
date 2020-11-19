@@ -41,7 +41,7 @@ public class UsableTimeAdapter  extends RecyclerView.Adapter<UsableTimeAdapter.V
         if(list.get(position).getValue()<1)  holder.progressView.setProgress(1);
         else
         holder.progressView.setProgress(list.get(position).getValue());
-        Log.d("item",""+list.get(position).getValue());
+
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
         holder.value.setText(df.format(list.get(position).getValue())+"%");

@@ -13,6 +13,7 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -42,6 +43,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.dx.dxloadingbutton.lib.LoadingButton;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.Model.ShellExecuter;
@@ -67,12 +69,15 @@ import static maes.tech.intentanim.CustomIntent.customType;
 public class LoadingActivity extends AppCompatActivity {
     private boolean goToBatHealhAct=false;
     private ArrayList<UsableTimeItem> list;
-    private LoadingButton loadingView;
+    private Button startButton;
     TextView message;
-    Button startButton;
+
     CardView cardview;
     private  boolean granted = false;
+    private LottieAnimationView animationView;
+
     SharedPreferences sharedPrefs ;
+    boolean isCameraPermiss=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,44 +86,47 @@ public class LoadingActivity extends AppCompatActivity {
         SetUpStatusBar();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Hook();
+        startButton.setVisibility(View.GONE);
+        animationView = (LottieAnimationView) findViewById(R.id.loading_animation);
+        animationView.setAnimation("loading.json");
+        animationView.playAnimation();
+        ActivityNavigate();
         GetUsagePermission();
-        loadingView.setTextSize(25);
-        loadingView.setPadding(10,10,10,10);
-        loadingView.setPaddingRelative(10,10,10,10);
-        loadingView.setBackgroundShader(new LinearGradient(0f,0f,1000f,100f, 0xAAE53935, 0xAAFF5722, Shader.TileMode.CLAMP));
-        loadingView.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingView.startLoading();
-                AppOpsManager appOps = (AppOpsManager)LoadingActivity.this.getSystemService(Context.APP_OPS_SERVICE);
-                int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
-                        android.os.Process.myUid(), LoadingActivity.this.getPackageName());
+                handler.removeCallbacksAndMessages(null);
 
-                if (mode == AppOpsManager.MODE_DEFAULT) {
-                    granted = (LoadingActivity.this.checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED);
-                } else {
-                    granted = (mode == AppOpsManager.MODE_ALLOWED);
-                }
+
+
+
                 //
-                if( granted==true)
-                {
-                    GetCameraPermission();
-
-                    GetBatteryStat();
-                    ListToSharePreference();
-                    ActivityNavigate();
-                    //lấy các tông tin bên dưới lưu vào share preference để main activity gọi ra
-                    GetCPUInfo();//lấy tên model của cpu
-                    GetCoreInfo("/sys/devices/system/cpu/present");//lấy số lượng core
-                    GetRamSize();//lấy total size của ram
-                    GetDeviceName();//lấy tên model của điện thoại
-                    getDisplaySize(LoadingActivity.this);//lấy dislay của diện thoại dơn vị là inch
-                    getScreenResolution(LoadingActivity.this);
-                    getBackCameraResolutionInMp();
-                    GetBatteryName();
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[] {Manifest.permission.CAMERA}, 222);
                 } else {
-                    Toast.makeText(LoadingActivity.this, "Cần cấp quyền cho ứng dụng để tiếp tực", Toast.LENGTH_SHORT).show();
-                    GetUsagePermission();
+
+
+                        startButton.setEnabled(false);
+
+
+
+
+
+
+                        getBackCameraResolutionInMp();
+
+                        Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        customType(LoadingActivity.this,"bottom-to-up");
+
+
+
+                        finish();
+
 
                 }
             }
@@ -128,7 +136,7 @@ public class LoadingActivity extends AppCompatActivity {
     }
 
     private void Hook() {
-        loadingView=findViewById(R.id.loading_view);
+        startButton=findViewById(R.id.start_button);
        // startButton=findViewById(R.id.starButton);
 
     }
@@ -136,7 +144,7 @@ public class LoadingActivity extends AppCompatActivity {
     private void GetCameraPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] {Manifest.permission.CAMERA}, 1);
+                requestPermissions(new String[] {Manifest.permission.CAMERA}, 222);
             }
         }
     }
@@ -240,7 +248,7 @@ public class LoadingActivity extends AppCompatActivity {
         ShellExecuter exe = new ShellExecuter();
         String command = "ls /proc/";
         String outp = exe.Executer(command);
-        Log.d("banaba",outp);
+
     }
 
     //Lấy chiều dài chiều rộng của Camera
@@ -251,7 +259,7 @@ public class LoadingActivity extends AppCompatActivity {
         float maxResolution1 = -1;
         float maxResolution2=-1;
         long pixelCount = -1;
-        Log.d("num camera",noOfCameras+"");
+
         for (int i = 0;i < noOfCameras;i++)
         {
             Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
@@ -269,7 +277,7 @@ public class LoadingActivity extends AppCompatActivity {
                         pixelCount = pixelCountTemp;
                         maxResolution1 = ((float)pixelCountTemp) / (1024000.0f);
 
-                        Log.d("camera",Math.round(maxResolution1)+"");
+
                     }
                 }
                 pixelCount = -1;
@@ -281,7 +289,7 @@ public class LoadingActivity extends AppCompatActivity {
                 Camera.Parameters cameraParams = camera.getParameters();
                 for (int j = 0;j < cameraParams.getSupportedPictureSizes().size();j++)
                 {
-                    Log.d("camera front",cameraParams.getSupportedPictureSizes().size()+"");
+
                     long pixelCountTemp = cameraParams.getSupportedPictureSizes().get(j).width * cameraParams.getSupportedPictureSizes().get(j).height; // Just changed i to j in this loop
                     if (pixelCountTemp > pixelCount)
                     {
@@ -312,7 +320,7 @@ public class LoadingActivity extends AppCompatActivity {
 
                 do {
                     line = bufferedReader.readLine();
-                    Log.d(path, line);
+
                     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
                     SharedPreferences.Editor editor = sharedPrefs.edit();
                     if(line.contains("1")) editor.putString("cpuCore","2");
@@ -344,31 +352,37 @@ public class LoadingActivity extends AppCompatActivity {
         editor.putString("usageStats", json);
         editor.commit();
     }
-
+    boolean flag=false;
+Handler handler=new Handler();
     private void ActivityNavigate() {
 
-            BatteryManager mBatteryManager = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
-            final int estimated = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                   // loadingView.doneLoadingAnimation(Color.parseColor("#666666"),BitmapFactory.decodeResource(getResources(),R.drawable.ic_play_circle_outline_black_24dp));
-                    loadingView.loadingSuccessful();
-                    SharedPreferences.Editor editor = sharedPrefs.edit();
-                    Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
-                    editor.putInt("lastBattery",estimated);
-                    editor.putBoolean("returnFragment",false);
-                    editor.commit();
-                    startActivity(intent);
-                    customType(LoadingActivity.this,"bottom-to-up");
+        GetCPUInfo();//lấy tên model của cpu
+        GetCoreInfo("/sys/devices/system/cpu/present");//lấy số lượng core
+        GetRamSize();//lấy total size của ram
+        GetDeviceName();//lấy tên model của điện thoại
+        getDisplaySize(LoadingActivity.this);//lấy dislay của diện thoại dơn vị là inch
+        getScreenResolution(LoadingActivity.this);
+        GetBatteryName();
+
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                if(flag==false){ handler.postDelayed(this,3000);flag=true;}else{
+                animationView.cancelAnimation();
+                animationView.setProgress(120);
+                startButton.setVisibility(View.VISIBLE);
+                handler.removeCallbacksAndMessages(null);
 
 
 
-                    finish();
-                }
 
-            }, 5000);
+            }}
 
+
+        };
+        runnable.run();
     }
     private void GetCPUInfo() {
         ShellExecuter exe = new ShellExecuter();
@@ -378,7 +392,7 @@ public class LoadingActivity extends AppCompatActivity {
         String [] spiltString=outp.split(":");
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        Log.d("kq",outp);
+
         String result=spiltString[spiltString.length-1];
         result=result;
         result.replace(" ","");
@@ -386,7 +400,7 @@ public class LoadingActivity extends AppCompatActivity {
         String t="\n abcdc123";
         t=result.replace("\n", "").replace("\r", "");
         boolean atleastOneAlpha = t.matches(".*[a-zA-Z]+.*");
-        Log.d("kq",result+atleastOneAlpha+"");
+
 
         if(atleastOneAlpha)
         editor.putString("cpuName",t);
@@ -468,25 +482,15 @@ public class LoadingActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             startActivityForResult(intent,1111);
         }
-        Log.d("check_permission",""+granted);
+        else{
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1111) {
-
-            // resultCode được set bởi DetailActivity
-            // RESULT_OK chỉ ra rằng kết quả này đã thành công
-            if(resultCode == Activity.RESULT_OK) {
-                granted=true;
-
-            } else {
-                // DetailActivity không thành công, không có data trả về.
-            }
+            ActivityNavigate();
         }
+
+
     }
+
+
 
     //Get battery Usage time
     private void GetBatteryStat() {
@@ -496,17 +500,28 @@ public class LoadingActivity extends AppCompatActivity {
         UsageStatsManager mUsageStatsManager = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
         List<UsageStats> queryUsageStats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
                 (System.currentTimeMillis() - 86400000), System.currentTimeMillis());
-        Log.d("index",""+queryUsageStats.size());
 
+        String appPackageName=getApplication().getPackageName();
+        PackageManager pm = this.getPackageManager();
 
         //add to list usableTime
         for(int i=0;i<queryUsageStats.size();i++)
         {
+            try {
+                ApplicationInfo ai = pm.getApplicationInfo(queryUsageStats.get(i).getPackageName(), 0);
+
+
+                if ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
             final String packageName = queryUsageStats.get(i).getPackageName();
             PackageManager packageManager= this.getPackageManager();
             try {
                 String appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
-                if(queryUsageStats.get(i).getTotalTimeInForeground()!=0)
+                if(queryUsageStats.get(i).getTotalTimeInForeground()!=0&&!queryUsageStats.get(i).getPackageName().equals(appPackageName))
                     list.add(new UsableTimeItem(queryUsageStats.get(i).getTotalTimeInForeground(),appName,1));
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
@@ -518,25 +533,26 @@ public class LoadingActivity extends AppCompatActivity {
         float totalTime=0;
         list=createResult(list);
 
-        for(int i=0;i<list.size()-1;i++){
+        for(int i=0;i<list.size();i++){
+
             totalTime= (long) (totalTime+list.get(i).getValue());
         }
-        for(int i=0;i<list.size()-1;i++){
+        for(int i=0;i<list.size();i++){
 
             float result=list.get(i).getValue()*100/totalTime;
             list.get(i).setValue(result);
 
         }
-        list.remove(list.size()-1);
+
 
     }
     private ArrayList<Integer> getResult(ArrayList<Integer> lista, ArrayList<Integer> listb)
     {
-        Log.d("size",lista.size()+"");
+
         ArrayList<Integer> result=new ArrayList<>();
         for (int i=0;i<lista.size();i++)
         {
-            Log.d("lista",""+lista.get(i));
+
             if(!listb.contains(lista.get(i)))
 
              result.add(lista.get(i));
