@@ -155,7 +155,7 @@ public class HomeFragment extends Fragment {
     batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
     int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-    value.setText(""+batteryLevel);
+    value.setText(""+batteryLevel+"%");
     circularProgressBar.setProgress((float)batteryLevel);
     SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0);
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -196,7 +196,7 @@ public class HomeFragment extends Fragment {
       batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
 
 
-      value.setText(""+batteryLevel);
+      value.setText(""+batteryLevel+"%");
       circularProgressBar.setProgress((float)batteryLevel);
       remainingTime.setVisibility(View.GONE);
     }

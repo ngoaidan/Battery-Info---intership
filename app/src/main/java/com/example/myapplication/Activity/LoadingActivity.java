@@ -28,7 +28,9 @@ import android.hardware.Camera;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -87,6 +89,7 @@ public class LoadingActivity extends AppCompatActivity {
         SetUpStatusBar();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Hook();
+        Log.d("shellcommand",runAsRoot());
         startButton.setVisibility(View.GONE);
         animationView = (LottieAnimationView) findViewById(R.id.loading_animation);
         animationView.setAnimation("loading.json");
@@ -249,6 +252,7 @@ public class LoadingActivity extends AppCompatActivity {
         String outp = exe.Executer(command);
         String[] ramInfo=outp.split(" ");
         float result=Float.parseFloat(ramInfo[8]);
+        Log.d("RAM",result+"");
         result=result/1000000;
 
         SharedPreferences.Editor editor = sharedPrefs.edit();
@@ -259,10 +263,12 @@ public class LoadingActivity extends AppCompatActivity {
     }
     private void GetBatteryName(){
         ShellExecuter exe = new ShellExecuter();
-        String command = "ls /proc/";
+        String command = "$ df -Th /var";
         String outp = exe.Executer(command);
+        Log.d("df",outp);
 
     }
+
 
     //Lấy chiều dài chiều rộng của Camera
     public float getBackCameraResolutionInMp()
@@ -322,6 +328,37 @@ public class LoadingActivity extends AppCompatActivity {
 
         return 0;
     }
+    public String runAsRoot() {
+
+        try {
+            // Executes the command.
+            Process process = Runtime.getRuntime().exec("df -h");
+
+            // Reads stdout.
+            // NOTE: You can write to stdin of the command using
+            //       process.getOutputStream().
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            int read;
+            char[] buffer = new char[4096];
+            StringBuffer output = new StringBuffer();
+            while ((read = reader.read(buffer)) > 0) {
+                output.append(buffer, 0, read);
+            }
+            reader.close();
+
+            // Waits for the command to finish.
+            process.waitFor();
+
+            return output.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void GetCoreInfo(String path) {
         InputStream inputStream = null;
         try {
@@ -366,11 +403,11 @@ public class LoadingActivity extends AppCompatActivity {
         editor.commit();
     }
     boolean flag=false;
-    long secondValue=0;
-    long firstValue=0;
+    int secondValue=0;
+    int firstValue=0;
 Handler handler=new Handler();
     private void ActivityNavigate() {
-
+       // getBatteryCapacity();
         GetCPUInfo();//lấy tên model của cpu
         GetCoreInfo("/sys/devices/system/cpu/present");//lấy số lượng core
         GetRamSize();//lấy total size của ram
@@ -380,9 +417,10 @@ Handler handler=new Handler();
         GetBatteryName();
         final BatteryManager bm = (BatteryManager) this.getSystemService(BATTERY_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            firstValue=bm.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+            firstValue=bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+
         }
-        Log.d("first",""+firstValue);
+
 
         Runnable runnable = new Runnable() {
             @Override
@@ -393,13 +431,14 @@ Handler handler=new Handler();
                 animationView.setProgress(120);
                 startButton.setVisibility(View.VISIBLE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        secondValue=bm.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+                        secondValue=bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
                         SharedPreferences.Editor editor=sharedPrefs.edit();
                         editor.putLong("sub",firstValue-secondValue);
                         editor.putLong("lastBattery",secondValue);
                         editor.putBoolean("returnFragment",false);
                         Log.d("first",""+secondValue);
                         editor.commit();
+                       Log.d("banaba",firstValue+" "+secondValue);
                     }
 
                     handler.removeCallbacksAndMessages(null);
@@ -412,6 +451,42 @@ Handler handler=new Handler();
 
         };
         runnable.run();
+    }
+    public void getBatteryCapacity() {
+        Object mPowerProfile_ = null;
+
+        final String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
+
+        try {
+            mPowerProfile_ = Class.forName(POWER_PROFILE_CLASS)
+                    .getConstructor(Context.class).newInstance(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            double batteryCapacity = (double) Class
+                    .forName(POWER_PROFILE_CLASS)
+                    .getMethod("getBatteryCapacity")
+                    .invoke(  mPowerProfile_);
+            Toast.makeText(LoadingActivity.this, batteryCapacity + " mah",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private  void battery(){
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        long bytesAvailable;
+        if (android.os.Build.VERSION.SDK_INT >=
+                android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            bytesAvailable = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
+        }
+        else {
+            bytesAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks();
+        }
+        long megAvailable = bytesAvailable / (1024 * 1024);
+        Log.d("banaba",megAvailable+"");
     }
     private void GetCPUInfo() {
 

@@ -18,6 +18,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.os.StatFs;
 import android.os.SystemClock;
 import android.os.storage.StorageManager;
@@ -168,22 +169,25 @@ public class DifferenceFragment extends Fragment {
             return;
         }
         List<StorageVolume> storageVolumes = storageManager.getStorageVolumes();
+
         double result=0;
         long remain=0;
+        Log.d("volumeSize",storageVolumes.size()+"");
 
         for (StorageVolume storageVolume : storageVolumes) {
-            final String uuidStr = storageVolume.getUuid();
-            try {
-            final UUID uuid = uuidStr == null ? StorageManager.UUID_DEFAULT : UUID.fromString(uuidStr);
 
-                Log.d("AppLog", "storage:" + uuid + " : " + storageVolume.getDescription(getContext()) + " : " + storageVolume.getState());
-                Log.d("AppLog", "getFreeBytes:" + Formatter.formatShortFileSize(getContext(), storageStatsManager.getFreeBytes(uuid)));
-                Log.d("AppLog", "getTotalBytes:" + Formatter.formatShortFileSize(getContext(), storageStatsManager.getTotalBytes(uuid)));
-                result=(double) (storageStatsManager.getTotalBytes(uuid)-storageStatsManager.getFreeBytes(uuid))*100/storageStatsManager.getTotalBytes(uuid);
+
+            try {
+
+
+                Log.d("AppLog", "storage:" + StorageManager.UUID_DEFAULT + " : " + storageVolume.getDescription(getContext()) + " : " + storageVolume.getState());
+                Log.d("AppLog", "getFreeBytes:" + Formatter.formatShortFileSize(getContext(), storageStatsManager.getFreeBytes(StorageManager.UUID_DEFAULT)));
+                Log.d("AppLog", "getTotalBytes:" + Formatter.formatShortFileSize(getContext(), storageStatsManager.getTotalBytes(StorageManager.UUID_DEFAULT)));
+                result=(double) (storageStatsManager.getTotalBytes(StorageManager.UUID_DEFAULT)-storageStatsManager.getFreeBytes(StorageManager.UUID_DEFAULT))*100/storageStatsManager.getTotalBytes(StorageManager.UUID_DEFAULT);
                 Log.d("result",""+result);
-                remain=storageStatsManager.getFreeBytes(uuid);
-                TotalandFree=Formatter.formatShortFileSize(getContext(), storageStatsManager.getFreeBytes(uuid))+" free\n"+
-                        Formatter.formatShortFileSize(getContext(), storageStatsManager.getTotalBytes(uuid))+" total";
+                remain=storageStatsManager.getFreeBytes(StorageManager.UUID_DEFAULT);
+                TotalandFree=Formatter.formatShortFileSize(getContext(), storageStatsManager.getFreeBytes(StorageManager.UUID_DEFAULT))+" free\n"+
+                        Formatter.formatShortFileSize(getContext(), storageStatsManager.getTotalBytes(StorageManager.UUID_DEFAULT))+" total";
 
             } catch (Exception e) {
                 // IGNORED
@@ -212,7 +216,8 @@ public class DifferenceFragment extends Fragment {
             File internalStorageFile=getContext().getFilesDir();
             long availableSizeInBytes=new StatFs(internalStorageFile.getPath()).getAvailableBytes();
             Long totalsize=new StatFs(internalStorageFile.getPath()).getTotalBytes();
-            Log.d("freespace",Formatter.formatShortFileSize(getContext(),availableSizeInBytes));
+            Log.d("freespace",totalsize+"");
+            Toast.makeText(getContext(), ""+totalsize, Toast.LENGTH_LONG).show();
             Log.d("freespace",Formatter.formatShortFileSize(getContext(),totalsize));
             double result= (double) ((totalsize-availableSizeInBytes)*100/totalsize);
             DecimalFormat df = new DecimalFormat("#.#"); String formatted = df.format(result);

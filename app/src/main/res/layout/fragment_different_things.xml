@@ -108,6 +108,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Remain size"
+                                android:gravity="center_horizontal"
                                 android:textColor="@color/usableThingName"
                                 android:textSize="15dp"
                                 />
