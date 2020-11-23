@@ -50,7 +50,7 @@
             android:paddingTop="40dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingBottom="10dp"
+            android:paddingBottom="20dp"
             android:orientation="vertical"
             android:background="@drawable/battery_health_info_border"
             android:gravity="center"
@@ -109,13 +109,14 @@
                     android:background="@drawable/question_button_background"
                     />
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:text="Please charge more than 20% of the electricity first to estimate battery's health accuratel"
                     android:textColor="@color/white"
                     android:textSize="15dp"
-
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
                     android:layout_marginTop="5dp"
                     android:drawablePadding="5dp"
                     />
@@ -127,7 +128,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:paddingLeft="20dp"
             android:id="@+id/batteryHealthRecyclerView"
             app:spanCount="2"

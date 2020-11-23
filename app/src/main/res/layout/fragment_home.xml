@@ -115,6 +115,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="-190dp"
         app:cardElevation="0dp"
+        app:cardPreventCornerOverlap="false"
         app:cardBackgroundColor="@android:color/transparent"
         >
         <LinearLayout

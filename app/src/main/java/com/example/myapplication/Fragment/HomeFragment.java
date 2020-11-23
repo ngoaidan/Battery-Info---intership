@@ -1,6 +1,7 @@
 package com.example.myapplication.Fragment;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.RemoteException;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -75,6 +78,7 @@ public class HomeFragment extends Fragment {
 
 
 
+  @RequiresApi(api = Build.VERSION_CODES.Q)
   @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,12 +89,17 @@ public class HomeFragment extends Fragment {
       value=view.findViewById(R.id.progressValue);
       recyclerView=view.findViewById(R.id.recyclerView);
       remainingTime=view.findViewById(R.id.remainingTime);
+    //
+
+
+
 
       //setup list usable item
       AddItemToList();
       SetUpList();
       //Get battery level
       list=new ArrayList<>();
+
       GetBatteryInfo();
 
     try {
@@ -139,48 +148,57 @@ public class HomeFragment extends Fragment {
     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
     returnFragment=sharedPrefs.getBoolean("returnFragment",false);
-    lastBatteryEnergy=sharedPrefs.getInt("lastBattery",0);
+
 
     Intent batteryStatus = getContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     int batteryLevel=0;
     batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
     int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-    double batLevel =  batteryLevel/ (double) scale;
+
     value.setText(""+batteryLevel);
     circularProgressBar.setProgress((float)batteryLevel);
     SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0);
-    if(returnFragment==true) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      if (returnFragment == true) {
 
-      String estimateTime=pref.getString("prefTime", "Unknown");
-      if(!estimateTime.isEmpty())
-      remainingTime.setText(estimateTime);
-      else remainingTime.setVisibility(View.GONE);
-    }
+        String estimateTime = pref.getString("prefTime", "Unknown");
+        if (!estimateTime.isEmpty())
+          remainingTime.setText(estimateTime);
+        else remainingTime.setVisibility(View.GONE);
+      } else {
 
-    else
-    {
-     BatteryManager mBatteryManager = (BatteryManager)getContext().getSystemService(Context.BATTERY_SERVICE);
-     int  estimated=mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-     /*Tính tam suất giữa lượng pin mất mác trong 5s và lượng pin còn lại */
-     int sub=lastBatteryEnergy-estimated;
-     float resultSecond=(float)estimated*5/sub;
-     float resultHours=  (resultSecond/3600);
-     int temp= (int) (resultSecond/3600);
-     float temp1= resultHours-temp;
-     int resultMinute= (int) (temp1*60);
-     if(sub>0)
-     remainingTime.setText("It is expected to last for "+(int)resultHours+"h "+resultMinute+" min");
-     else remainingTime.setVisibility(View.GONE);
-     SharedPreferences.Editor editor = pref.edit();
-     if(sub>0){
-      editor.putString("prefTime","It is expected to last for "+(int)resultHours+"h "+resultMinute+" min");
-      editor.commit();
+        long estimated = sharedPrefs.getLong("lastBattery",0);
+
+
+
+        /*Tính tam suất giữa lượng pin mất mác trong 5s và lượng pin còn lại */
+        long sub = sharedPrefs.getLong("sub",0);
+        float resultSecond = (float) estimated * 6 / sub;
+        float resultHours = (resultSecond / 3600);
+        int temp = (int) (resultSecond / 3600);
+        float temp1 = resultHours - temp;
+        int resultMinute = (int) (temp1 * 60);
+        Log.d("sub",sub+"");
+        if (sub > 0)
+          remainingTime.setText("It is expected to last for " + (int) resultHours + "h " + resultMinute + " min");
+        else remainingTime.setVisibility(View.GONE);
+        SharedPreferences.Editor editor = pref.edit();
+        if (sub > 0) {
+          editor.putString("prefTime", "It is expected to last for " + (int) resultHours + "h " + resultMinute + " min");
+          editor.commit();
+        } else {
+          editor.putString("prefTime", "");
+          editor.commit();
+
+        }
       }
-     else{
-       editor.putString("prefTime","");
-       editor.commit();
+    } else {
+      batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
 
-     }
+
+      value.setText(""+batteryLevel);
+      circularProgressBar.setProgress((float)batteryLevel);
+      remainingTime.setVisibility(View.GONE);
     }
 
   }

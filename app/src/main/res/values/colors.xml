@@ -6,7 +6,6 @@
     <color name="colorBackground">#131313</color>
     <color name="colorGreenLight"> #00c460</color>
     <color name="white"> #fff</color>
-    <color name="black"> #000</color>
     <color name="textPink">#727376</color>
     <color name="batteryStatus">#D9E4E4</color>
     <color name="batteryStatusResult">#C2D7D8</color>
@@ -14,8 +13,6 @@
     <color name="usableThingName">#B4BABB</color>
     <color name="progressBarStartColor">#8BC34A</color>
     <color name="progressBarEndColor">#535151</color>
-    <color name="cell_border">#3F51B5</color>
-    <color name="cell_solid">#C6E5E9</color>
 
 
 </resources>

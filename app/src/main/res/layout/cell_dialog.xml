@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:paddingLeft="30dp"
-    android:paddingRight="30dp"
+    android:paddingTop="20dp"
     android:paddingBottom="20dp"
-    android:background="@drawable/cell_dialog_bg"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
+android:background="@drawable/cell_dialog_bg"
     android:layout_height="wrap_content"
 
     >

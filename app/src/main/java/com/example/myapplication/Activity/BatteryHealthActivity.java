@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -78,7 +79,9 @@ public class BatteryHealthActivity extends AppCompatActivity {
             setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-        window.setStatusBarColor(Color.TRANSPARENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
     }
 
     private void ActionToolBar() {
@@ -137,26 +140,23 @@ public class BatteryHealthActivity extends AppCompatActivity {
         if(batteryState==4) status="Not charging";
         if(batteryState==5) status="FULL";
         //Battery Size
-        estimated=mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
-        //battery Estimated
-        long remainingPercent=mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
-        long temp= estimated*100;
-        long result=temp/remainingPercent;
-
-       size=(int)result;
+        int batteryLevel=0;
+        batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
+        Log.d("level",batteryLevel+"");
        size=(int)getBatteryCapacity(this);
+       estimated=batteryLevel*size/100;
 
         //Battery Voltage
         voltag=batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE,voltag);
         //Battery Temperature
         temperature=batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,temperature);
         list.add(new BatteryHealthItem("Battery Health",health));
-        list.add(new BatteryHealthItem("Estimated",estimated/1000+"mAh"));
+        list.add(new BatteryHealthItem("Estimated",estimated+"mAh"));
         list.add(new BatteryHealthItem("Charge state",status));
         list.add(new BatteryHealthItem("Battery Size",size+"mAh"));
         list.add(new BatteryHealthItem("Voltage",(float)voltag/1000+"V"));
-        list.add(new BatteryHealthItem("Temperature",temperature/10-17+""+'\u00B0'+"C"));
+        list.add(new BatteryHealthItem("Temperature",temperature/10+""+'\u00B0'+"C"));
     }
 
 

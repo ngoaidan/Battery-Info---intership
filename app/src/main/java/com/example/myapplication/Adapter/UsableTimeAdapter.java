@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Model.UsableTimeItem;
 import com.example.myapplication.R;
-import com.mackhartley.roundedprogressbar.RoundedProgressBar;
+
 import com.skydoves.progressview.ProgressView;
 
 import java.text.DecimalFormat;

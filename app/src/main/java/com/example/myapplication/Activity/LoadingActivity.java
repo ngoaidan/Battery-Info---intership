@@ -7,6 +7,7 @@ import androidx.cardview.widget.CardView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -91,7 +92,10 @@ public class LoadingActivity extends AppCompatActivity {
         animationView.setAnimation("loading.json");
         animationView.playAnimation();
         ActivityNavigate();
-        GetUsagePermission();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            GetUsagePermission();
+        }
+
 
 
 
@@ -99,34 +103,43 @@ public class LoadingActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handler.removeCallbacksAndMessages(null);
+              handler.removeCallbacksAndMessages(null);
 
 
 
 
                 //
-                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[] {Manifest.permission.CAMERA}, 222);
-                } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[] {Manifest.permission.CAMERA}, 222);
+                    } else {
+
+                            startButton.setEnabled(false);
+                            getBackCameraResolutionInMp();
+                            Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            customType(LoadingActivity.this,"bottom-to-up");
+                            finish();
 
 
-                        startButton.setEnabled(false);
+                    }
+                }else {
+                    startButton.setEnabled(false);
 
 
 
 
 
 
-                        getBackCameraResolutionInMp();
+                    getBackCameraResolutionInMp();
 
-                        Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        customType(LoadingActivity.this,"bottom-to-up");
+                    Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    customType(LoadingActivity.this,"bottom-to-up");
 
 
 
-                        finish();
-
+                    finish();
 
                 }
             }
@@ -353,6 +366,8 @@ public class LoadingActivity extends AppCompatActivity {
         editor.commit();
     }
     boolean flag=false;
+    long secondValue=0;
+    long firstValue=0;
 Handler handler=new Handler();
     private void ActivityNavigate() {
 
@@ -363,17 +378,31 @@ Handler handler=new Handler();
         getDisplaySize(LoadingActivity.this);//lấy dislay của diện thoại dơn vị là inch
         getScreenResolution(LoadingActivity.this);
         GetBatteryName();
-
+        final BatteryManager bm = (BatteryManager) this.getSystemService(BATTERY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            firstValue=bm.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+        }
+        Log.d("first",""+firstValue);
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
 
-                if(flag==false){ handler.postDelayed(this,3000);flag=true;}else{
+                if(flag==false){ handler.postDelayed(this,6000);flag=true;}else{
                 animationView.cancelAnimation();
                 animationView.setProgress(120);
                 startButton.setVisibility(View.VISIBLE);
-                handler.removeCallbacksAndMessages(null);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        secondValue=bm.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+                        SharedPreferences.Editor editor=sharedPrefs.edit();
+                        editor.putLong("sub",firstValue-secondValue);
+                        editor.putLong("lastBattery",secondValue);
+                        editor.putBoolean("returnFragment",false);
+                        Log.d("first",""+secondValue);
+                        editor.commit();
+                    }
+
+                    handler.removeCallbacksAndMessages(null);
 
 
 
@@ -385,6 +414,9 @@ Handler handler=new Handler();
         runnable.run();
     }
     private void GetCPUInfo() {
+
+
+
         ShellExecuter exe = new ShellExecuter();
         String command = "cat /proc/cpuinfo";
 
@@ -392,7 +424,7 @@ Handler handler=new Handler();
         String [] spiltString=outp.split(":");
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPrefs.edit();
-
+        Log.d("cpuinfo",outp);
         String result=spiltString[spiltString.length-1];
         result=result;
         result.replace(" ","");
@@ -425,7 +457,9 @@ Handler handler=new Handler();
             setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-        window.setStatusBarColor(Color.TRANSPARENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
     }
     public static void setWindowFlag(Activity activity, final int bits, boolean on) {
         Window win = activity.getWindow();
@@ -484,80 +518,14 @@ Handler handler=new Handler();
         }
         else{
 
-            ActivityNavigate();
-        }
-
-
-    }
-
-
-
-    //Get battery Usage time
-    private void GetBatteryStat() {
-        //Checking permission
-
-        //Get usable time service in a day
-        UsageStatsManager mUsageStatsManager = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
-        List<UsageStats> queryUsageStats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
-                (System.currentTimeMillis() - 86400000), System.currentTimeMillis());
-
-        String appPackageName=getApplication().getPackageName();
-        PackageManager pm = this.getPackageManager();
-
-        //add to list usableTime
-        for(int i=0;i<queryUsageStats.size();i++)
-        {
-            try {
-                ApplicationInfo ai = pm.getApplicationInfo(queryUsageStats.get(i).getPackageName(), 0);
-
-
-                if ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
-
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-            final String packageName = queryUsageStats.get(i).getPackageName();
-            PackageManager packageManager= this.getPackageManager();
-            try {
-                String appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
-                if(queryUsageStats.get(i).getTotalTimeInForeground()!=0&&!queryUsageStats.get(i).getPackageName().equals(appPackageName))
-                    list.add(new UsableTimeItem(queryUsageStats.get(i).getTotalTimeInForeground(),appName,1));
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-
-        float totalTime=0;
-        list=createResult(list);
-
-        for(int i=0;i<list.size();i++){
-
-            totalTime= (long) (totalTime+list.get(i).getValue());
-        }
-        for(int i=0;i<list.size();i++){
-
-            float result=list.get(i).getValue()*100/totalTime;
-            list.get(i).setValue(result);
 
         }
 
 
     }
-    private ArrayList<Integer> getResult(ArrayList<Integer> lista, ArrayList<Integer> listb)
-    {
 
-        ArrayList<Integer> result=new ArrayList<>();
-        for (int i=0;i<lista.size();i++)
-        {
 
-            if(!listb.contains(lista.get(i)))
 
-             result.add(lista.get(i));
 
-        }
-        return  result;
-    }
+
 }

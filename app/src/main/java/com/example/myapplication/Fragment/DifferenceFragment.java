@@ -42,6 +42,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -93,9 +94,9 @@ public class DifferenceFragment extends Fragment {
         screenSize.setText(sharedPrefs.getString("Dislay","0")+"IN");
         resolutionInfo.setText(sharedPrefs.getString("screenResolution","Unknown"));
         cameraSize.setText(sharedPrefs.getString("cameraResolution","Unknown"));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
             showStorageVolumes();
-        }
+
 
 
         SetUpBasicInfo();
@@ -153,9 +154,13 @@ public class DifferenceFragment extends Fragment {
 
    private String TotalandFree="";
     //Lấy giá các giá trị của internal/external storage
-    @RequiresApi(api = Build.VERSION_CODES.O)
+
     private void showStorageVolumes() {
-        StorageStatsManager storageStatsManager = (StorageStatsManager) getContext().getSystemService(Context.STORAGE_STATS_SERVICE);
+        Log.d("freespace","aasdsad");
+        StorageStatsManager storageStatsManager = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            storageStatsManager = (StorageStatsManager) getContext().getSystemService(Context.STORAGE_STATS_SERVICE);
+
 
         StorageManager storageManager = (StorageManager) getContext().getSystemService(Context.STORAGE_SERVICE);
         if (storageManager == null || storageStatsManager == null) {
@@ -165,6 +170,7 @@ public class DifferenceFragment extends Fragment {
         List<StorageVolume> storageVolumes = storageManager.getStorageVolumes();
         double result=0;
         long remain=0;
+
         for (StorageVolume storageVolume : storageVolumes) {
             final String uuidStr = storageVolume.getUuid();
             try {
@@ -173,11 +179,12 @@ public class DifferenceFragment extends Fragment {
                 Log.d("AppLog", "storage:" + uuid + " : " + storageVolume.getDescription(getContext()) + " : " + storageVolume.getState());
                 Log.d("AppLog", "getFreeBytes:" + Formatter.formatShortFileSize(getContext(), storageStatsManager.getFreeBytes(uuid)));
                 Log.d("AppLog", "getTotalBytes:" + Formatter.formatShortFileSize(getContext(), storageStatsManager.getTotalBytes(uuid)));
-                result=(double)(storageStatsManager.getTotalBytes(uuid)-storageStatsManager.getFreeBytes(uuid))*100/storageStatsManager.getTotalBytes(uuid);
+                result=(double) (storageStatsManager.getTotalBytes(uuid)-storageStatsManager.getFreeBytes(uuid))*100/storageStatsManager.getTotalBytes(uuid);
                 Log.d("result",""+result);
                 remain=storageStatsManager.getFreeBytes(uuid);
                 TotalandFree=Formatter.formatShortFileSize(getContext(), storageStatsManager.getFreeBytes(uuid))+" free\n"+
                         Formatter.formatShortFileSize(getContext(), storageStatsManager.getTotalBytes(uuid))+" total";
+
             } catch (Exception e) {
                 // IGNORED
             }
@@ -187,6 +194,34 @@ public class DifferenceFragment extends Fragment {
 
         useSize.setText(formatted+"%");
         remainSize.setText(Formatter.formatShortFileSize(getContext(), remain));
+        }
+        else if (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT){
+            File internalStorageFile=getContext().getFilesDir();
+            File[] externalStorageFiles= ContextCompat.getExternalFilesDirs(getContext(),null);
+            long availableSizeInBytes=internalStorageFile.getFreeSpace();
+            long totalSize=internalStorageFile.getTotalSpace();
+            Log.d("space",Formatter.formatShortFileSize(getContext(),availableSizeInBytes)+" "+Formatter.formatShortFileSize(getContext(),totalSize));
+            TotalandFree=Formatter.formatShortFileSize(getContext(),availableSizeInBytes)+" free\n"
+                    +Formatter.formatShortFileSize(getContext(),totalSize)+" total";
+            remainSize.setText(Formatter.formatShortFileSize(getContext(),availableSizeInBytes));
+            double result= (double) ((totalSize-availableSizeInBytes)*100/totalSize);
+            DecimalFormat df = new DecimalFormat("#.#"); String formatted = df.format(result);
+            useSize.setText(formatted+"%");
+        }
+        else {
+            File internalStorageFile=getContext().getFilesDir();
+            long availableSizeInBytes=new StatFs(internalStorageFile.getPath()).getAvailableBytes();
+            Long totalsize=new StatFs(internalStorageFile.getPath()).getTotalBytes();
+            Log.d("freespace",Formatter.formatShortFileSize(getContext(),availableSizeInBytes));
+            Log.d("freespace",Formatter.formatShortFileSize(getContext(),totalsize));
+            double result= (double) ((totalsize-availableSizeInBytes)*100/totalsize);
+            DecimalFormat df = new DecimalFormat("#.#"); String formatted = df.format(result);
+            remainSize.setText(Formatter.formatShortFileSize(getContext(),availableSizeInBytes));
+            useSize.setText(formatted+"%");
+            TotalandFree=Formatter.formatShortFileSize(getContext(),availableSizeInBytes)+" free\n"
+                    +Formatter.formatShortFileSize(getContext(),totalsize)+" total";
+
+        }
     }
 
     private void SetUpBatteryList() {
@@ -220,10 +255,9 @@ public class DifferenceFragment extends Fragment {
         //Battery Size
 
         //battery Estimated
-        long remainingPercent=mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
-
-
+        int batteryLevel=0;
+        batteryLevel=batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
 
 
         //Battery Voltage
@@ -231,8 +265,8 @@ public class DifferenceFragment extends Fragment {
         //Battery Temperature
         temperature=batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,temperature);
         batteryList.add(new PhoneInfoItem("Battery status",status));
-        batteryList.add(new PhoneInfoItem("Level",remainingPercent+"%"));
-        batteryList.add(new PhoneInfoItem("Temperature",temperature/10-17+""+'\u00B0'+"C"));
+        batteryList.add(new PhoneInfoItem("Level",batteryLevel+"%"));
+        batteryList.add(new PhoneInfoItem("Temperature",temperature/10+""+'\u00B0'+"C"));
         batteryList.add(new PhoneInfoItem("Voltage",(float)voltag/1000+"V"));
 
         PhoneInfoAdapter adapter=new PhoneInfoAdapter(batteryList,getContext());

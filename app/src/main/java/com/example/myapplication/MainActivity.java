@@ -1,13 +1,16 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -15,6 +18,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,59 +27,71 @@ import android.view.WindowManager;
 import com.example.myapplication.Fragment.DifferenceFragment;
 import com.example.myapplication.Fragment.HomeFragment;
 import com.example.myapplication.Fragment.AboutAppFragment;
+import com.example.myapplication.Model.ShellExecuter;
 import com.example.myapplication.Model.UsableTimeItem;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
-import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    ChipNavigationBar navigationBar;
+    BottomNavigationView navigationBar;
     int lastBatteryEnnergy;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         lastBatteryEnnergy=getIntent().getIntExtra("remainingBattery",0);
         setStatusBar();
-        GetBatteryStat();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        GetBatteryStat();}
+        else GetUsageStatForKitKat();
         ListToSharePreference();
         setContentView(R.layout.activity_main);
-        navigationBar=findViewById(R.id.bottom_menu);
+        navigationBar=findViewById(R.id.bottom_nav);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameContainer, new HomeFragment());
         transaction.addToBackStack(null);
         transaction.commit();
-        navigationBar.setItemSelected(R.id.home,true);
-        navigationBar.setOnItemSelectedListener(new ChipNavigationBar.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(int i) {
-                Fragment fragment=null;
-                switch(i){
-                    case R.id.home:
-                        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                        SharedPreferences.Editor editor = sharedPrefs.edit();
-                        editor.putBoolean("returnFragment",true);
-                        editor.commit();
-                        fragment=new HomeFragment();
-                        break;
-                    case R.id.differences:
-                        fragment=new DifferenceFragment();
-                        break;
-                    case R.id.setting:
-                        fragment=new AboutAppFragment();
-                        break;
-                }
+        navigationBar.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frameContainer, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
+
 
 
     }
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment=null;
+            switch(item.getItemId()){
+                case R.id.home:
+                    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putBoolean("returnFragment",true);
+                    item.setChecked(true);
+                    editor.commit();
+                    fragment=new HomeFragment();
+                    break;
+                case R.id.differences:
+                    fragment=new DifferenceFragment();
+                    item.setChecked(true);
+                    break;
+                case R.id.setting:
+                    fragment=new AboutAppFragment();
+                    item.setChecked(true);
+                    break;
+            }
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frameContainer, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            return false;
+        }
+    };
 
     @Override
     public void onBackPressed() {
@@ -96,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
             setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-        window.setStatusBarColor(Color.TRANSPARENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
     }
     private void ListToSharePreference() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this) ;
@@ -136,7 +155,12 @@ public class MainActivity extends AppCompatActivity {
         //Checking permission
     list=new ArrayList<>();
         //Get usable time service in a day
-        UsageStatsManager mUsageStatsManager = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
+        UsageStatsManager mUsageStatsManager = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mUsageStatsManager = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
+
+
         List<UsageStats> queryUsageStats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
                 (System.currentTimeMillis() - 86400000), System.currentTimeMillis());
 
@@ -146,22 +170,24 @@ public class MainActivity extends AppCompatActivity {
         //add to list usableTime
         for(int i=0;i<queryUsageStats.size();i++)
         {
+
             try {
                 ApplicationInfo ai = pm.getApplicationInfo(queryUsageStats.get(i).getPackageName(), 0);
 
+                if(queryUsageStats.get(i).getTotalTimeInForeground()!=0&&!queryUsageStats.get(i).getPackageName()
+                        .equals(appPackageName)) {
 
-                if ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
+                    final String packageName = queryUsageStats.get(i).getPackageName();
+                    PackageManager packageManager = this.getPackageManager();
+                    try {
+                        String appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
 
+                        if ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != ApplicationInfo.FLAG_SYSTEM)
+                            list.add(new UsableTimeItem(queryUsageStats.get(i).getTotalTimeInForeground(), appName, 1));
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-            final String packageName = queryUsageStats.get(i).getPackageName();
-            PackageManager packageManager= this.getPackageManager();
-            try {
-                String appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
-                if(queryUsageStats.get(i).getTotalTimeInForeground()!=0&&!queryUsageStats.get(i).getPackageName().equals(appPackageName))
-                    list.add(new UsableTimeItem(queryUsageStats.get(i).getTotalTimeInForeground(),appName,1));
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
@@ -182,9 +208,59 @@ public class MainActivity extends AppCompatActivity {
             list.get(i).setValue(result);
 
         }
+        }
 
 
     }
+    private int totalTime=0;
+    private  void GetUsageStatForKitKat(){
+        list=new ArrayList<>();
+        ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> pids = am.getRunningAppProcesses();
+        int processid = 0;
+        PackageManager pm = this.getPackageManager();
+
+        String appPackageName=getApplication().getPackageName();
+        for (int i = 0; i < pids.size(); i++) {
+            ActivityManager.RunningAppProcessInfo info = pids.get(i);
+
+            processid = info.pid;
+
+            ShellExecuter exe = new ShellExecuter();
+            String command = "cat /proc/"+processid+"/stat";
+            String outp = exe.Executer(command);
+            outp.replace(' ','\n');
+            String [] result=outp.split(" ");
+            Log.d("info",outp);
+
+            PackageManager packageManager= this.getPackageManager();
+            try {
+                String appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(pids.get(i).processName, PackageManager.GET_META_DATA));
+                Log.d("Banaba",appName+" " +result[13]+" "+result[14]+"\n");
+                totalTime= Integer.parseInt(result[13])+ Integer.parseInt(result[14]);
+                if(totalTime!=0) list.add(new UsableTimeItem(totalTime,appName,-1));
+
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        float totalTime=0;
+        list=createResult(list);
+
+        for(int i=0;i<list.size();i++){
+
+            totalTime= (long) (totalTime+list.get(i).getValue());
+        }
+        for(int i=0;i<list.size();i++){
+
+            float result=list.get(i).getValue()*100/totalTime;
+            list.get(i).setValue(result);
+
+        }
+    }
+
 
     public static void setWindowFlag(Activity activity, final int bits, boolean on) {
         Window win = activity.getWindow();
