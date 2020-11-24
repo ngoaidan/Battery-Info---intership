@@ -121,7 +121,18 @@ public class DifferenceFragment extends Fragment {
         Log.d("last boot", SystemClock.elapsedRealtime()+"");
         list=new ArrayList<>();
         list.add(new PhoneInfoItem("Last boot",dateString));
-        list.add(new PhoneInfoItem("Running Time",getRunningTime(SystemClock.elapsedRealtime())));
+        String runningResult=getRunningTime(SystemClock.elapsedRealtime());
+        String [] arr=runningResult.split(", ");
+
+        for(int i=0;i<arr.length;i++){
+            Log.d("arr",""+arr[i].equals("0 d"));
+            if(i==0&&arr[i].equals("0 d")==false) runningResult=runningResult+arr[i]+", ";
+            else if(i==1&&!arr[i].equals("0 h")) runningResult=runningResult+arr[i]+", ";
+            else if(i==3) runningResult=runningResult+arr[i];
+            else if(i==2)runningResult=runningResult+arr[i]+", ";
+
+        }
+        list.add(new PhoneInfoItem("Running Time",runningResult));
         PhoneInfoAdapter adapter=new PhoneInfoAdapter(list,getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         rvBasic.setLayoutManager(mLayoutManager);

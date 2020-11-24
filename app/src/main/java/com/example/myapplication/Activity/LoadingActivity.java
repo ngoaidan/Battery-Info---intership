@@ -73,14 +73,9 @@ public class LoadingActivity extends AppCompatActivity {
     private boolean goToBatHealhAct=false;
     private ArrayList<UsableTimeItem> list;
     private Button startButton;
-    TextView message;
-
-    CardView cardview;
     private  boolean granted = false;
     private LottieAnimationView animationView;
-
     SharedPreferences sharedPrefs ;
-    boolean isCameraPermiss=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,61 +84,40 @@ public class LoadingActivity extends AppCompatActivity {
         SetUpStatusBar();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Hook();
-
         startButton.setVisibility(View.GONE);
         animationView = (LottieAnimationView) findViewById(R.id.loading_animation);
         animationView.setAnimation("loading.json");
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //kitkat không dùng Usage Stats được
             GetUsagePermission();
         }
-        else{
+        else{ //bỏ qua xin quyền đối với kitkat
             ActivityNavigate();
         }
-
-
-
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
               handler.removeCallbacksAndMessages(null);
-
-
-
-
                 //
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[] {Manifest.permission.CAMERA}, 222);
                     } else {
-
                             startButton.setEnabled(false);
                             getBackCameraResolutionInMp();
                             Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
                             startActivity(intent);
                             customType(LoadingActivity.this,"bottom-to-up");
                             finish();
-
-
                     }
                 }else {
                     startButton.setEnabled(false);
-
-
-
-
-
 
                     getBackCameraResolutionInMp();
 
                     Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
                     startActivity(intent);
                     customType(LoadingActivity.this,"bottom-to-up");
-
-
-
                     finish();
 
                 }
@@ -159,13 +133,7 @@ public class LoadingActivity extends AppCompatActivity {
 
     }
 
-    private void GetCameraPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] {Manifest.permission.CAMERA}, 222);
-            }
-        }
-    }
+
 
     private void getDisplaySize(Activity activity) {
         SharedPreferences.Editor editor = sharedPrefs.edit();
@@ -330,36 +298,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         return 0;
     }
-    public String runAsRoot() {
 
-        try {
-            // Executes the command.
-            Process process = Runtime.getRuntime().exec("df -h");
-
-            // Reads stdout.
-            // NOTE: You can write to stdin of the command using
-            //       process.getOutputStream().
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-
-            int read;
-            char[] buffer = new char[4096];
-            StringBuffer output = new StringBuffer();
-            while ((read = reader.read(buffer)) > 0) {
-                output.append(buffer, 0, read);
-            }
-            reader.close();
-
-            // Waits for the command to finish.
-            process.waitFor();
-
-            return output.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private void GetCoreInfo(String path) {
         InputStream inputStream = null;
@@ -394,16 +333,7 @@ public class LoadingActivity extends AppCompatActivity {
             }
         }
     }
-    private void ListToSharePreference() {
 
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        Gson gson = new Gson();
-
-        String json = gson.toJson(list);
-
-        editor.putString("usageStats", json);
-        editor.commit();
-    }
     boolean flag=false;
     int secondValue=0;
     int firstValue=0;
@@ -455,42 +385,7 @@ Handler handler=new Handler();
         };
         runnable.run();
     }
-    public void getBatteryCapacity() {
-        Object mPowerProfile_ = null;
 
-        final String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
-
-        try {
-            mPowerProfile_ = Class.forName(POWER_PROFILE_CLASS)
-                    .getConstructor(Context.class).newInstance(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            double batteryCapacity = (double) Class
-                    .forName(POWER_PROFILE_CLASS)
-                    .getMethod("getBatteryCapacity")
-                    .invoke(  mPowerProfile_);
-            Toast.makeText(LoadingActivity.this, batteryCapacity + " mah",
-                    Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    private  void battery(){
-        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-        long bytesAvailable;
-        if (android.os.Build.VERSION.SDK_INT >=
-                android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            bytesAvailable = stat.getBlockSizeLong() * stat.getAvailableBlocksLong();
-        }
-        else {
-            bytesAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks();
-        }
-        long megAvailable = bytesAvailable / (1024 * 1024);
-        Log.d("banaba",megAvailable+"");
-    }
     private void GetCPUInfo() {
 
 
@@ -595,16 +490,7 @@ Handler handler=new Handler();
             startActivityForResult(intent,1111);
         }
         else{
-
-
-
         }
-
-
-    }
-
-
-
-
+   }
 
 }
