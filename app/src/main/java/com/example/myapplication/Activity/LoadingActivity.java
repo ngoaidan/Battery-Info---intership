@@ -89,16 +89,18 @@ public class LoadingActivity extends AppCompatActivity {
         SetUpStatusBar();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Hook();
-        Log.d("shellcommand",runAsRoot());
+
         startButton.setVisibility(View.GONE);
         animationView = (LottieAnimationView) findViewById(R.id.loading_animation);
         animationView.setAnimation("loading.json");
-        animationView.playAnimation();
-        ActivityNavigate();
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             GetUsagePermission();
         }
-
+        else{
+            ActivityNavigate();
+        }
 
 
 
@@ -408,6 +410,7 @@ public class LoadingActivity extends AppCompatActivity {
 Handler handler=new Handler();
     private void ActivityNavigate() {
        // getBatteryCapacity();
+        animationView.playAnimation();
         GetCPUInfo();//lấy tên model của cpu
         GetCoreInfo("/sys/devices/system/cpu/present");//lấy số lượng core
         GetRamSize();//lấy total size của ram
@@ -572,7 +575,7 @@ Handler handler=new Handler();
     }
 
     private void GetUsagePermission(){
-
+        ActivityNavigate();
         AppOpsManager appOps = (AppOpsManager)this
                 .getSystemService(Context.APP_OPS_SERVICE);
         int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
@@ -592,6 +595,7 @@ Handler handler=new Handler();
             startActivityForResult(intent,1111);
         }
         else{
+
 
 
         }

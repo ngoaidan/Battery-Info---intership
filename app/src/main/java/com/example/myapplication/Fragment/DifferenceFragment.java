@@ -213,18 +213,18 @@ public class DifferenceFragment extends Fragment {
             useSize.setText(formatted+"%");
         }
         else {
-            File internalStorageFile=getContext().getFilesDir();
-            long availableSizeInBytes=new StatFs(internalStorageFile.getPath()).getAvailableBytes();
-            Long totalsize=new StatFs(internalStorageFile.getPath()).getTotalBytes();
-            Log.d("freespace",totalsize+"");
-            Toast.makeText(getContext(), ""+totalsize, Toast.LENGTH_LONG).show();
-            Log.d("freespace",Formatter.formatShortFileSize(getContext(),totalsize));
-            double result= (double) ((totalsize-availableSizeInBytes)*100/totalsize);
-            DecimalFormat df = new DecimalFormat("#.#"); String formatted = df.format(result);
-            remainSize.setText(Formatter.formatShortFileSize(getContext(),availableSizeInBytes));
-            useSize.setText(formatted+"%");
-            TotalandFree=Formatter.formatShortFileSize(getContext(),availableSizeInBytes)+" free\n"
-                    +Formatter.formatShortFileSize(getContext(),totalsize)+" total";
+            StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+            long bytesAvailable;
+            if (android.os.Build.VERSION.SDK_INT >=
+                    android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                bytesAvailable = stat.getBlockSizeLong() * stat.getBlockCountLong();
+            }
+            else {
+                bytesAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks();
+            }
+            long megAvailable = bytesAvailable / (1024 * 1024);
+            Log.e("","Available MB : "+megAvailable);
+            Toast.makeText(getContext(), megAvailable+"", Toast.LENGTH_SHORT).show();
 
         }
     }
