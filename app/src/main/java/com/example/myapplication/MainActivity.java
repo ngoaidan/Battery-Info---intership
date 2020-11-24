@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
         String appPackageName=getApplication().getPackageName();
         for (int i = 0; i < pids.size(); i++) {
             ActivityManager.RunningAppProcessInfo info = pids.get(i);
+            if(!appPackageName.equals(pids.get(i).processName)){
 
             processid = info.pid;
 
@@ -242,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-            }
+            }}
 
 
         }
