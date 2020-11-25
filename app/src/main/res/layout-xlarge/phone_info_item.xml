@@ -13,16 +13,14 @@
         android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="18dp"
-
         android:layout_alignParentStart="true"
 
         />
     <TextView
-
+        android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/infoValue"
-        android:layout_marginRight="10dp"
         android:text="arm64-v84"
         android:textColor="@color/usableThingName"
         android:textSize="15dp"

@@ -98,6 +98,7 @@ public class LoadingActivity extends AppCompatActivity {
         startButton.setVisibility(View.GONE);
         animationView = (LottieAnimationView) findViewById(R.id.loading_animation);
         animationView.setAnimation("loading.json");
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //kitkat không dùng Usage Stats được
             GetUsagePermission();
         }
@@ -467,7 +468,7 @@ public class LoadingActivity extends AppCompatActivity {
 Handler handler=new Handler();
     private void ActivityNavigate() {
        // getBatteryCapacity();
-        animationView.playAnimation();
+
         GetCPUInfo();//lấy tên model của cpu
         GetCoreInfo("/sys/devices/system/cpu/present");//lấy số lượng core
         GetRamSize();//lấy total size của ram
@@ -486,7 +487,8 @@ Handler handler=new Handler();
             @Override
             public void run() {
 
-                if(flag==false){ handler.postDelayed(this,6000);flag=true;}else{
+                if(flag==false){
+                    handler.postDelayed(this,6000);flag=true;}else{
                 animationView.cancelAnimation();
                 animationView.setProgress(120);
                 startButton.setVisibility(View.VISIBLE);
@@ -512,6 +514,7 @@ Handler handler=new Handler();
         };
         runnable.run();
     }
+
 
     private void GetCPUInfo() {
 
@@ -610,6 +613,7 @@ Handler handler=new Handler();
         }
         //Navigate to active permission
         if(granted==false){
+            animationView.loop(false);
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);

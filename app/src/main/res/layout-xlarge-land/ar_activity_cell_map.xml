@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView android:layout_width="match_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:background="@color/colorBackground"
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        tools:context=".Activity.CellMapActivity">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:paddingTop="30dp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:id="@+id/Cell_toolbar"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:text="@string/battery_cell_map"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                />
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/question_button_background"
+                android:text="\?"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:textSize="20dp"
+                android:textColor="#fff"
+                android:layout_gravity="end"
+                android:id="@+id/questionButton"
+                />
+        </androidx.appcompat.widget.Toolbar>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cellMap"
+            android:layout_marginTop="20dp"
+
+            android:layout_gravity="center_horizontal"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.dx.dxloadingbutton.lib.LoadingButton
+                android:id="@+id/button_cell"
+
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:layout_width="300dp"
+                android:padding="20dp"
+            android:layout_below="@+id/layoutinfo"
+                android:layout_height="60dp"
+                app:lb_resetAfterFailed="true"
+                app:lb_btnRippleColor="#131313"
+                app:lb_btnDisabledColor="#cccccc"
+                app:lb_disabledTextColor="#999999"
+                app:lb_cornerRadius="20dp"
+                app:lb_rippleEnable="true"
+                app:lb_btnColor="@color/colorGreenLight"
+                android:layout_gravity="center_horizontal"
+                app:lb_btnText="@string/analyse"
+
+
+                />
+            <com.dx.dxloadingbutton.lib.LoadingButton
+                android:id="@+id/button_skip"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:layout_width="300dp"
+                android:padding="20dp"
+                android:layout_below="@+id/button_cell"
+                android:layout_height="60dp"
+                app:lb_resetAfterFailed="true"
+                app:lb_btnRippleColor="#131313"
+
+                app:lb_btnDisabledColor="#cccccc"
+                app:lb_disabledTextColor="#999999"
+                app:lb_cornerRadius="20dp"
+                app:lb_rippleEnable="true"
+                app:lb_btnColor="#FF9800"
+                android:layout_gravity="center_horizontal"
+                app:lb_btnText="@string/skip"
+
+
+                />
+
+            <LinearLayout
+                android:layout_width="300dp"
+                android:padding="20dp"
+                android:id="@+id/layoutinfo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+
+                android:orientation="horizontal"
+                android:layout_marginTop="80dp"
+                android:background="@drawable/cardview_background"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical" android:layout_width="20dp"
+
+                    android:layout_height="20dp"
+                    android:background="@drawable/cell_item_background"
+                    android:layout_margin="3dp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/healthy"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="20dp"
+                    />
+                <LinearLayout
+                    android:orientation="vertical" android:layout_width="20dp"
+
+                    android:layout_height="20dp"
+                    android:background="@drawable/cell_low_status"
+                    android:layout_margin="3dp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/low"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="20dp"
+                    />
+                <LinearLayout
+                    android:orientation="vertical" android:layout_width="20dp"
+
+                    android:layout_height="20dp"
+                    android:background="@drawable/cell_battery_inactive"
+                    android:layout_margin="3dp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/inactive"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

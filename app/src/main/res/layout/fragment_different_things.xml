@@ -71,7 +71,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:gravity="center"
+
                             android:layout_height="wrap_content">
                             <TextView
                                 android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:gravity="center_horizontal"
+
                                 android:text="@string/used_size"
                                 android:textColor="@color/usableThingName"
                                 android:textSize="15dp"
@@ -95,7 +95,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:gravity="center"
+
                             android:layout_marginLeft="20dp"
                             android:layout_height="wrap_content">
                             <TextView
@@ -111,7 +111,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/remain_size"
-                                android:gravity="center_horizontal"
+
                                 android:textColor="@color/usableThingName"
                                 android:textSize="15dp"
                                 />

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:fillViewport="true">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        android:paddingTop="30dp"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:background="#131313">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/app_name"
+                android:textColor="#fff"
+                android:layout_toLeftOf="@+id/free_ad_btn"
+                android:textSize="30sp"
+                />
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="@string/free_ad"
+                android:background="@drawable/custom_buttom"
+                android:textColor="#fff"
+                android:id="@+id/free_ad_btn"
+                android:layout_alignParentEnd="true"
+                />
+        </RelativeLayout>
+
+        <TextView
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="It is expected to last for 23 h 54 min"
+            android:textColor="@color/textPink"
+            android:textSize="20sp"
+            android:id="@+id/remainingTime"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:background="@drawable/alert_border"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="50dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="40dp"
+                android:id="@+id/alert"
+                android:layout_gravity="center_horizontal"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_add_alert_black_24dp"
+                android:layout_height="40dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_toLeftOf="@+id/check_btn"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="5dp"
+                android:layout_height="wrap_content"
+                android:text="@string/abnormal_heat_generation_detected_in_your_phone"
+                android:textDirection="anyRtl"
+                android:id="@+id/message"
+                android:textSize="18dp"
+                android:layout_toRightOf="@id/alert"
+                android:textColor="#fff"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/check"
+                android:textStyle="bold"
+                android:id="@+id/check_btn"
+                android:layout_gravity="center_horizontal"
+                android:layout_centerVertical="true"
+                android:textAllCaps="false"
+                android:background="@drawable/custom_buttom"
+                android:textColor="#070707"
+                android:textSize="15sp"
+                android:layout_marginTop="20dp"
+                android:layout_alignParentEnd="true"
+                />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content">
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:id="@+id/circularProgressBar"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                app:cpb_progressbar_color_start="@color/progressBarStartColor"
+                app:cpb_progressbar_color_end="@color/progressBarEndColor"
+
+                app:cpb_progressbar_color_direction="top_to_bottom"
+                app:cpb_background_progressbar_color="#070707"
+                app:cpb_background_progressbar_width="10dp"
+                app:cpb_progress_direction="to_right"
+                app:cpb_progressbar_color="#8BC34A"
+                app:cpb_progressbar_width="10dp"
+
+                app:cpb_progress="0"
+                app:cpb_round_border="true" />
+
+
+
+        </RelativeLayout>
+        <androidx.cardview.widget.CardView
+
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="-240dp"
+            app:cardElevation="0dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardBackgroundColor="@android:color/transparent"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:background="@drawable/circle_background"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progressValue"
+                    android:textSize="55dp"
+
+                    android:textColor="@color/white"
+                    android:text="50%"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/power_save"
+                    android:textColor="@color/white"
+                    android:padding="5dp"
+                    android:background="@drawable/textview_border"
+                    />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:padding="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/usable_time"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/lightBlue"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/more"
+                android:id="@+id/loadMore"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/lightBlue"
+                android:layout_alignParentEnd="true"
+                android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+
+                />
+        </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerView"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center"
+
+            />
+
+
+
+    </LinearLayout>
+</ScrollView>
