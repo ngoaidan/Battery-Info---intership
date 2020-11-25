@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,10 +45,15 @@ public class CellMapActivity extends AppCompatActivity {
     int [] low;
     int [] inative;
     Handler handler=new Handler();
+    String lang="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cell_map);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+      lang=sharedPrefs.getString("lang","");
+        if(lang.equals("ar"))
+        setContentView(R.layout.ar_activity_cell_map);
+        else setContentView(R.layout.activity_cell_map);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         SetUpStatusBar();
         SetUp();
@@ -150,8 +156,13 @@ public class CellMapActivity extends AppCompatActivity {
     }
 
     private void ShowDialog() {
-        android.app.AlertDialog.Builder  mbuilder=new AlertDialog.Builder(CellMapActivity.this,R.style.CustomAlertDialog);
-        View view=getLayoutInflater().inflate(R.layout.cell_dialog,null);
+        android.app.AlertDialog.Builder  mbuilder;
+
+        mbuilder=new AlertDialog.Builder(CellMapActivity.this,R.style.CustomAlertDialog);
+        View view;
+        if(lang.equals("ar"))
+        view=getLayoutInflater().inflate(R.layout.ar_cell_dialog,null);
+        else   view=getLayoutInflater().inflate(R.layout.cell_dialog,null);
         TextView tvHealth,tvLow,tvInactive;
         LoadingButton btnDone;
         tvHealth=view.findViewById(R.id.cell_health);
@@ -161,9 +172,9 @@ public class CellMapActivity extends AppCompatActivity {
         mbuilder.setView(view);
         final AlertDialog alertDialog=mbuilder.create();
         alertDialog.setCancelable(false);
-        tvHealth.setText("Healthy: "+(120-low.length-inative.length)+" cells");
-        tvLow.setText("Low: "+low.length+" cells");
-        tvInactive.setText("Inactive: "+inative.length+" cells");
+        tvHealth.setText(tvHealth.getText().toString()+" "+(120-low.length-inative.length)+" cells");
+        tvLow.setText(tvLow.getText().toString()+" "+low.length+" cells");
+        tvInactive.setText(tvInactive.getText().toString()+" "+inative.length+" cells");
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

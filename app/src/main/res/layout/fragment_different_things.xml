@@ -47,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/phoneMode"
-                        android:text="Phone Model"
+                        android:text="@string/phone_model"
                         android:textColor="@color/white"
                         android:textSize="20dp"
                         android:textStyle="bold"
@@ -62,13 +62,14 @@
                         android:textSize="15dp"
                         />
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_marginTop="15dp"
                         android:orientation="horizontal"
 
                         android:layout_height="wrap_content">
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:orientation="vertical"
                             android:gravity="center"
                             android:layout_height="wrap_content">
@@ -84,13 +85,15 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Used size"
+                                android:gravity="center_horizontal"
+                                android:text="@string/used_size"
                                 android:textColor="@color/usableThingName"
                                 android:textSize="15dp"
                                 />
                         </LinearLayout>
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
                             android:orientation="vertical"
                             android:gravity="center"
                             android:layout_marginLeft="20dp"
@@ -107,7 +110,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Remain size"
+                                android:text="@string/remain_size"
                                 android:gravity="center_horizontal"
                                 android:textColor="@color/usableThingName"
                                 android:textSize="15dp"
@@ -127,7 +130,8 @@
             android:gravity="center"
             android:orientation="horizontal">
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_margin="10dp"
                 android:gravity="center"
@@ -141,7 +145,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15dp"
-                    android:text="Screen size"
+                    android:gravity="center_horizontal"
+                    android:text="@string/screen_size"
                     android:textColor="@color/usableThingName"
                     />
                 <TextView
@@ -155,7 +160,8 @@
                     />
             </LinearLayout>
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:layout_margin="10dp"
@@ -169,7 +175,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15dp"
-                    android:text="Resolution"
+                    android:gravity="center_horizontal"
+                    android:text="@string/resolution"
                     android:textColor="@color/usableThingName"
                     />
                 <TextView
@@ -177,13 +184,15 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/resolution"
                     android:text="2200*1080"
+
                     android:textColor="@color/colorGreenLight"
                     android:textSize="15dp"
                     android:textStyle="bold"
                     />
             </LinearLayout>
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:layout_margin="10dp"
@@ -197,7 +206,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15dp"
-                    android:text="Camera"
+                    android:gravity="center_horizontal"
+                    android:text="@string/camera"
                     android:textColor="@color/usableThingName"
                     />
                 <TextView
@@ -215,7 +225,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Basic"
+        android:text="@string/basic"
         android:layout_marginTop="10dp"
         android:textSize="15dp"
         android:textColor="@color/usableThingName"
@@ -234,7 +244,7 @@
     <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Hardware"
+    android:text="@string/hardware"
     android:textSize="15dp"
     android:textColor="@color/usableThingName"
     android:layout_marginLeft="20dp"
@@ -251,7 +261,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Battery Information"
+        android:text="@string/battery_information"
         android:textSize="15dp"
         android:textColor="@color/usableThingName"
         android:layout_marginLeft="20dp"

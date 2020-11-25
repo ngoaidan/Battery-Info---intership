@@ -30,6 +30,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_centerHorizontal="true"
                 android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:text="Voltage"
                 android:textSize="15dp"
                 android:textColor="@color/batteryStatus"

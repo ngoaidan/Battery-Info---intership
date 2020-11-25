@@ -8,10 +8,12 @@ import androidx.cardview.widget.CardView;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.AppOpsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -43,6 +45,7 @@ import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,9 +65,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-
+import java.util.Locale;
 
 
 import static maes.tech.intentanim.CustomIntent.customType;
@@ -75,14 +78,22 @@ public class LoadingActivity extends AppCompatActivity {
     private Button startButton;
     private  boolean granted = false;
     private LottieAnimationView animationView;
+    private ImageView changeLang;
     SharedPreferences sharedPrefs ;
+    String [] langs;
+    String [] langCode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+         langs=new String[]{"English","Tiếng việt","عربى","Deutsche","España","France","Italiano","日本人","한국어","Português","русский"};
+        langCode=new String[]{"en","vi","ar","de","es","fr","it","ja","ko","pt","ru"};
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        loadLocal();
         setContentView(R.layout.activity_loading);
         list=new ArrayList<>();
         SetUpStatusBar();
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         Hook();
         startButton.setVisibility(View.GONE);
         animationView = (LottieAnimationView) findViewById(R.id.loading_animation);
@@ -123,15 +134,131 @@ public class LoadingActivity extends AppCompatActivity {
                 }
             }
         });
+        changeLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowDialogLang();
+            }
+        });
 
 
+    }
+
+    private void ShowDialogLang() {
+
+        AlertDialog.Builder mbuilder=new AlertDialog.Builder(LoadingActivity.this);
+        mbuilder.setTitle("Choose language");
+        mbuilder.setSingleChoiceItems(langs, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+               switch (which){
+                   case 0:{
+                       setLocale("en");
+                       recreate();
+                       break;
+                   }
+                   case 1:{
+                       setLocale("vi");
+                       recreate();
+                       break;
+                   }
+                   case 2:{
+                       setLocale("ar");
+                       recreate();
+                       break;
+                   }
+                   case 3:{
+                       setLocale("de");
+                       recreate();
+                       break;
+                   }
+                   case 4:{
+                       setLocale("es");
+                       recreate();
+                       break;
+                   }
+                   case 5:{
+                       setLocale("fr");
+                       recreate();
+                       break;
+                   }
+                   case 6:{
+                       setLocale("it");
+                       recreate();
+                       break;
+                   }
+                   case 7:{
+                       setLocale("ja");
+                       recreate();
+                       break;
+                   }
+                   case 8:{
+                       setLocale("ko");
+                       recreate();
+                       break;
+                   }
+                   case 9:{
+                       setLocale("pt");
+                       recreate();
+                       break;
+                   }
+                   case 10:{
+                       setLocale("ru");
+                       recreate();
+                       break;
+                   }
+               }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog=mbuilder.create();
+        alertDialog.show();
+
+    }
+
+    private void setLocale(String lang) {
+        Locale locale= new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration configuration=new Configuration();
+        configuration.locale=locale ;
+        getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor=sharedPrefs.edit();
+        editor.putString("lang",lang);
+        editor.commit();
+    }
+    private void loadLocal(){
+        String lang=sharedPrefs.getString("lang","");
+
+        if(lang.isEmpty()){
+
+            Locale locale=Locale.getDefault();
+            //Toast.makeText(this, locale.getDefault().getLanguage(), Toast.LENGTH_SHORT).show();
+            if(isLanguageInList(langCode,locale.getDefault().getLanguage()))
+                setLocale(locale.getDefault().getLanguage() );
+           else   setLocale("en");
+           return;
+        }
+        if(lang!=null)
+        setLocale(lang);
     }
 
     private void Hook() {
         startButton=findViewById(R.id.start_button);
+        changeLang=findViewById(R.id.change_lang_button);
        // startButton=findViewById(R.id.starButton);
 
     }
+
+    private boolean isLanguageInList(String[] list, String locale) {
+        if (list == null) {
+            return false;
+        }
+        for(int i=0;i<list.length;i++){
+            if(list[i].equals(locale)) return true;
+        }
+        return false;
+    }
+
 
 
 

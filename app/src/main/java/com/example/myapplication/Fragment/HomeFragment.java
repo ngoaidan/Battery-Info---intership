@@ -18,6 +18,7 @@ import android.os.RemoteException;
 import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,13 +68,13 @@ import static maes.tech.intentanim.CustomIntent.customType;
 public class HomeFragment extends Fragment {
   CircularProgressBar circularProgressBar;
   RecyclerView recyclerView;
-  TextView moreBtn;
+  TextView moreBtn,message;
   TextView value;
   ArrayList<UsableTimeItem> list;
   private int lastBatteryEnergy;
   TextView remainingTime;
   private  boolean returnFragment=false;
-
+  String lang="";
 
 
 
@@ -83,12 +84,21 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
       super.onCreateView(inflater, container, savedInstanceState);
-      View view= inflater.inflate(R.layout.fragment_home,container,false);
+    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    lang=sharedPrefs.getString("lang","");
+    View view;
+    if(lang.equals("ar"))
+    view= inflater.inflate(R.layout.ar_home_fragment,container,false);
+    else view=inflater.inflate(R.layout.fragment_home,container,false);
+
       circularProgressBar = view.findViewById(R.id.circularProgressBar);
       moreBtn=view.findViewById(R.id.loadMore);
       value=view.findViewById(R.id.progressValue);
       recyclerView=view.findViewById(R.id.recyclerView);
       remainingTime=view.findViewById(R.id.remainingTime);
+      message=view.findViewById(R.id.message);
+
+
     //
 
 
@@ -180,11 +190,11 @@ public class HomeFragment extends Fragment {
         int resultMinute = (int) (temp1 * 60);
         Log.d("sub",sub+"");
         if (sub > 0)
-          remainingTime.setText("It is expected to last for " + (int) resultHours + "h " + resultMinute + " min");
+          remainingTime.setText(getResources().getString(R.string.time_remaining)+ " " + (int) resultHours + "h " + resultMinute + " min");
         else remainingTime.setVisibility(View.GONE);
         SharedPreferences.Editor editor = pref.edit();
         if (sub > 0) {
-          editor.putString("prefTime", "It is expected to last for " + (int) resultHours + "h " + resultMinute + " min");
+          editor.putString("prefTime",getResources().getString(R.string.time_remaining)+ " " + (int) resultHours + "h " + resultMinute + " min");
           editor.commit();
         } else {
           editor.putString("prefTime", "");
@@ -217,6 +227,7 @@ public class HomeFragment extends Fragment {
     final UsableTimeAdapter adapter = new UsableTimeAdapter(list, getContext());
     recyclerView.setAdapter(adapter);
     final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
+
     value.setText("84%");
     moreBtn.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -227,6 +238,7 @@ public class HomeFragment extends Fragment {
       }
     });
     recyclerView.setLayoutManager(linearLayoutManager);
+    if(lang.equals("ar")) linearLayoutManager.setReverseLayout(true);
     circularProgressBar.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {

@@ -24,9 +24,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:text="Battery Cell Map"
+            android:text="@string/battery_cell_map"
             android:textColor="@color/white"
             android:layout_gravity="center"
+            android:textSize="18dp"
             />
         <Button
             android:layout_width="40dp"
@@ -54,12 +55,12 @@
         android:layout_height="match_parent">
         <com.dx.dxloadingbutton.lib.LoadingButton
             android:id="@+id/button_cell"
-            android:layout_alignParentTop="true"
+
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
             android:layout_width="300dp"
             android:padding="20dp"
-
+            android:layout_below="@+id/cell_info"
             android:layout_height="60dp"
             app:lb_resetAfterFailed="true"
             app:lb_btnRippleColor="#131313"
@@ -69,14 +70,14 @@
             app:lb_rippleEnable="true"
             app:lb_btnColor="@color/colorGreenLight"
             android:layout_gravity="center_horizontal"
-            app:lb_btnText="Analyse"
+            app:lb_btnText="@string/analyse"
 
 
             />
         <com.dx.dxloadingbutton.lib.LoadingButton
             android:id="@+id/button_skip"
            android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_width="300dp"
             android:padding="20dp"
             android:layout_below="@+id/button_cell"
@@ -90,71 +91,107 @@
             app:lb_rippleEnable="true"
             app:lb_btnColor="#FF9800"
             android:layout_gravity="center_horizontal"
-            app:lb_btnText="Skip"
-
+            app:lb_btnText="@string/skip"
+            android:layout_marginBottom="20dp"
 
             />
 
         <LinearLayout
             android:layout_width="300dp"
-            android:padding="20dp"
-            android:layout_below="@id/button_skip"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+           android:id="@+id/cell_info"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
 
-            android:orientation="horizontal"
-            android:layout_marginTop="50dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp"
             android:background="@drawable/cardview_background"
             android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content">
             <LinearLayout
-                android:orientation="vertical" android:layout_width="20dp"
-
-                android:layout_height="20dp"
-                android:background="@drawable/cell_item_background"
-                android:layout_margin="3dp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Healthy"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center"
-                android:textColor="@color/white"
-                android:layout_marginRight="20dp"
-                />
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    >
+                    <LinearLayout
+                        android:orientation="vertical" android:layout_width="20dp"
+
+                        android:layout_height="20dp"
+                        android:background="@drawable/cell_item_background"
+                        android:layout_margin="5dp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/healthy"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    >
+                    <LinearLayout
+                        android:orientation="vertical" android:layout_width="20dp"
+
+                        android:layout_height="20dp"
+                        android:background="@drawable/cell_low_status"
+                        android:layout_margin="5dp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/low"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
             <LinearLayout
-                android:orientation="vertical" android:layout_width="20dp"
-
-                android:layout_height="20dp"
-                android:background="@drawable/cell_low_status"
-                android:layout_margin="3dp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Low"
+                android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center"
-                android:textColor="@color/white"
-                android:layout_marginRight="20dp"
-                />
-            <LinearLayout
-                android:orientation="vertical" android:layout_width="20dp"
+                >
+                <LinearLayout
+                    android:orientation="vertical" android:layout_width="20dp"
 
-                android:layout_height="20dp"
-                android:background="@drawable/cell_battery_inactive"
-                android:layout_margin="3dp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Inactive"
-                android:gravity="center_horizontal"
-                android:layout_gravity="center"
-                android:textColor="@color/white"
-                />
+                    android:layout_height="20dp"
+                    android:background="@drawable/cell_battery_inactive"
+                    android:layout_margin="5dp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/inactive"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    />
+            </LinearLayout>
+
+
 
         </LinearLayout>
     </RelativeLayout>

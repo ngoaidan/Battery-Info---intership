@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/appName"
-                android:text="Battery Life"
+                android:text="@string/app_name"
                 android:textSize="30dp"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/white"
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/appVersion"
-                android:text="version 2.0.0"
+                android:text="@string/version"
                 android:textColor="@color/textPink"
                 android:layout_gravity="center"
                 android:textSize="20dp"
@@ -72,7 +72,7 @@
                 android:drawablePadding="15dp"
                 android:padding="10dp"
                 android:drawableRight="@drawable/next_30dp_ic"
-                android:text="Update"
+                android:text="@string/update"
                 android:textColor="@color/lightBlue"
                 android:textStyle="bold"
                 />
@@ -85,7 +85,7 @@
                 android:drawablePadding="15dp"
                 android:padding="10dp"
                 android:drawableRight="@drawable/next_30dp_ic"
-                android:text="Contact"
+                android:text="@string/contact"
                 android:textColor="@color/lightBlue"
                 android:textStyle="bold"
                 />
@@ -98,7 +98,7 @@
                 android:padding="10dp"
                 android:id="@+id/tvTermOfUse"
                 android:drawableRight="@drawable/next_30dp_ic"
-                android:text="Term of use"
+                android:text="@string/term_of_use"
                 android:textColor="@color/lightBlue"
                 android:textStyle="bold"
                 />
@@ -111,7 +111,7 @@
                 android:id="@+id/tvPrivacy"
                 android:padding="10dp"
                 android:drawableRight="@drawable/next_30dp_ic"
-                android:text="Privacy Policy"
+                android:text="@string/privacy_policy"
                 android:textColor="@color/lightBlue"
                 android:textStyle="bold"
                 />
@@ -124,7 +124,7 @@
                 android:padding="10dp"
                 android:id="@+id/tvAttention"
                 android:drawableRight="@drawable/next_30dp_ic"
-                android:text="Attention"
+                android:text="@string/attention"
                 android:textColor="@color/lightBlue"
                 android:textStyle="bold"
                 />

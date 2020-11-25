@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,20 +36,26 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView navigationBar;
     int lastBatteryEnnergy;
+    SharedPreferences sharedPrefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lastBatteryEnnergy=getIntent().getIntExtra("remainingBattery",0);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this) ;
+        loadLocal();
         setStatusBar();
+        setContentView(R.layout.activity_main);
+        lastBatteryEnnergy=getIntent().getIntExtra("remainingBattery",0);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
         GetBatteryStat();}
         else GetUsageStatForKitKat();
         ListToSharePreference();
-        setContentView(R.layout.activity_main);
+
         navigationBar=findViewById(R.id.bottom_nav);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frameContainer, new HomeFragment());
@@ -118,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void ListToSharePreference() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this) ;
+
 
         SharedPreferences.Editor editor = sharedPrefs.edit();
         Gson gson = new Gson();
@@ -211,6 +218,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+    private void setLocale(String lang) {
+        Locale locale= new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration configuration=new Configuration();
+        configuration.locale=locale ;
+        getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor=sharedPrefs.edit();
+        editor.putString("lang",lang);
+        editor.commit();
+    }
+    private void loadLocal(){
+        String lang=sharedPrefs.getString("lang","");
+        if(lang!=null)
+            setLocale(lang);
     }
     private int totalTime=0;
     private  void GetUsageStatForKitKat(){

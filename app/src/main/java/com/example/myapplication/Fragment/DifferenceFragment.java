@@ -71,6 +71,7 @@ public class DifferenceFragment extends Fragment {
     ArrayList<PhoneInfoItem> list;
     ArrayList<PhoneInfoItem> hardWareList;
     ArrayList<PhoneInfoItem> batteryList;
+    String lang="";
     StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
     StorageManager mStorageManager;
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -78,7 +79,12 @@ public class DifferenceFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view= inflater.inflate(R.layout.fragment_different_things,container,false);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        lang=sharedPrefs.getString("lang","");
+        View view;
+        if(lang.equals("ar"))
+        view = inflater.inflate(R.layout.ar_fragment_diff,container,false);
+        else  view = inflater.inflate(R.layout.fragment_different_things,container,false);
         useSize=view.findViewById(R.id.usedSize);
         remainSize=view.findViewById(R.id.remainingSize);
         screenSize=view.findViewById(R.id.screenSize);
@@ -89,7 +95,7 @@ public class DifferenceFragment extends Fragment {
         phoneModel=view.findViewById(R.id.phoneMode);
         osVersion=view.findViewById(R.id.osVersion);
         rvBattery=view.findViewById(R.id.rvBattery);
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+
         phoneModel.setText(sharedPrefs.getString("deviceName","Unknown"));
         osVersion.setText("Android "+GetAndroidVersion());
         screenSize.setText(sharedPrefs.getString("Dislay","0")+"IN");
@@ -104,6 +110,7 @@ public class DifferenceFragment extends Fragment {
         SetUpHardWareInfo();
         SetUpBatteryList();
         GetAndroidVersion();
+
         return view;
     }
 
@@ -120,20 +127,21 @@ public class DifferenceFragment extends Fragment {
         String dateString = formatter.format(new Date(dateInMillis));
         Log.d("last boot", SystemClock.elapsedRealtime()+"");
         list=new ArrayList<>();
-        list.add(new PhoneInfoItem("Last boot",dateString));
+        list.add(new PhoneInfoItem(getResources().getString(R.string.last_boot),dateString));
         String runningResult=getRunningTime(SystemClock.elapsedRealtime());
         String [] arr=runningResult.split(", ");
-
+        runningResult="";
         for(int i=0;i<arr.length;i++){
             Log.d("arr",""+arr[i].equals("0 d"));
             if(i==0&&arr[i].equals("0 d")==false) runningResult=runningResult+arr[i]+", ";
             else if(i==1&&!arr[i].equals("0 h")) runningResult=runningResult+arr[i]+", ";
             else if(i==3) runningResult=runningResult+arr[i];
             else if(i==2)runningResult=runningResult+arr[i]+", ";
+            Log.d("arr",runningResult);
 
         }
-        list.add(new PhoneInfoItem("Running Time",runningResult));
-        PhoneInfoAdapter adapter=new PhoneInfoAdapter(list,getContext());
+        list.add(new PhoneInfoItem(getResources().getString(R.string.running_time),runningResult));
+        PhoneInfoAdapter adapter=new PhoneInfoAdapter(list,getContext(),lang);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         rvBasic.setLayoutManager(mLayoutManager);
         rvBasic.setAdapter(adapter);
@@ -154,10 +162,13 @@ public class DifferenceFragment extends Fragment {
         String cpuName=sharedPrefs.getString("cpuName","Unknown");
         if(!cpuName.isEmpty()) hardWareList.add(new PhoneInfoItem("CPU",cpuName));
 
-        hardWareList.add(new PhoneInfoItem("Cores",sharedPrefs.getString("cpuCore","Unknown")));
-        hardWareList.add(new PhoneInfoItem("RAM",sharedPrefs.getString("ramSize","Unknown")+" GB"));
-        hardWareList.add(new PhoneInfoItem("Internal Storage",TotalandFree));
-        PhoneInfoAdapter adapter=new PhoneInfoAdapter(hardWareList,getContext());
+        hardWareList.add(new PhoneInfoItem(getResources().getString(R.string.cores),sharedPrefs.getString("cpuCore","Unknown")));
+        String lang=sharedPrefs.getString("lang","");
+        if(lang.equals("ar"))
+        hardWareList.add(new PhoneInfoItem("RAM","GB "+sharedPrefs.getString("ramSize","Unknown")));
+        else   hardWareList.add(new PhoneInfoItem("RAM",sharedPrefs.getString("ramSize","Unknown")+" GB"));
+        hardWareList.add(new PhoneInfoItem(getResources().getString(R.string.internal_storage),TotalandFree));
+        PhoneInfoAdapter adapter=new PhoneInfoAdapter(hardWareList,getContext(),lang);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         rvHardWare.setLayoutManager(mLayoutManager);
         rvHardWare.setAdapter(adapter);
@@ -224,18 +235,17 @@ public class DifferenceFragment extends Fragment {
             useSize.setText(formatted+"%");
         }
         else {
-            StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-            long bytesAvailable;
-            if (android.os.Build.VERSION.SDK_INT >=
-                    android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                bytesAvailable = stat.getBlockSizeLong() * stat.getBlockCountLong();
-            }
-            else {
-                bytesAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks();
-            }
-            long megAvailable = bytesAvailable / (1024 * 1024);
-            Log.e("","Available MB : "+megAvailable);
-            Toast.makeText(getContext(), megAvailable+"", Toast.LENGTH_SHORT).show();
+            File internalStorageFile=getContext().getFilesDir();
+            File[] externalStorageFiles= ContextCompat.getExternalFilesDirs(getContext(),null);
+            long availableSizeInBytes=internalStorageFile.getFreeSpace();
+            long totalSize=internalStorageFile.getTotalSpace();
+            Log.d("space",Formatter.formatShortFileSize(getContext(),availableSizeInBytes)+" "+Formatter.formatShortFileSize(getContext(),totalSize));
+            TotalandFree=Formatter.formatShortFileSize(getContext(),availableSizeInBytes)+" free\n"
+                    +Formatter.formatShortFileSize(getContext(),totalSize)+" total";
+            remainSize.setText(Formatter.formatShortFileSize(getContext(),availableSizeInBytes));
+            double result= (double) ((totalSize-availableSizeInBytes)*100/totalSize);
+            DecimalFormat df = new DecimalFormat("#.#"); String formatted = df.format(result);
+            useSize.setText(formatted+"%");
 
         }
     }
@@ -263,11 +273,11 @@ public class DifferenceFragment extends Fragment {
         //Battery Status
         batteryState=batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS,batteryHealth);
         String status="";
-        if(batteryState==1) status="Unknown";
-        if(batteryState==2) status="Charging";
-        if(batteryState==3) status="Discharging";
-        if(batteryState==4) status="Not charging";
-        if(batteryState==5) status="FULL";
+        if(batteryState==1) status=getResources().getString(R.string.unknown);
+        if(batteryState==2) status=getResources().getString(R.string.charging);
+        if(batteryState==3) status=getResources().getString(R.string.discharging);
+        if(batteryState==4) status=getResources().getString(R.string.not_charging);
+        if(batteryState==5) status=getResources().getString(R.string.full);
         //Battery Size
 
         //battery Estimated
@@ -280,12 +290,12 @@ public class DifferenceFragment extends Fragment {
         voltag=batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE,voltag);
         //Battery Temperature
         temperature=batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,temperature);
-        batteryList.add(new PhoneInfoItem("Battery status",status));
-        batteryList.add(new PhoneInfoItem("Level",batteryLevel+"%"));
-        batteryList.add(new PhoneInfoItem("Temperature",temperature/10+""+'\u00B0'+"C"));
-        batteryList.add(new PhoneInfoItem("Voltage",(float)voltag/1000+"V"));
+        batteryList.add(new PhoneInfoItem(getResources().getString(R.string.battery_status),status));
+        batteryList.add(new PhoneInfoItem(getResources().getString(R.string.level),batteryLevel+"%"));
+        batteryList.add(new PhoneInfoItem(getResources().getString(R.string.temperature),temperature/10+""+'\u00B0'+"C"));
+        batteryList.add(new PhoneInfoItem(getResources().getString(R.string.voltage),(float)voltag/1000+"V"));
 
-        PhoneInfoAdapter adapter=new PhoneInfoAdapter(batteryList,getContext());
+        PhoneInfoAdapter adapter=new PhoneInfoAdapter(batteryList,getContext(),lang);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         rvBattery.setLayoutManager(mLayoutManager);
         rvBattery.setAdapter(adapter);

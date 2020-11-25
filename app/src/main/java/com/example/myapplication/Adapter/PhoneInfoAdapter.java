@@ -17,16 +17,19 @@ import java.util.ArrayList;
 public class PhoneInfoAdapter extends RecyclerView.Adapter<PhoneInfoAdapter.ViewHolder> {
     ArrayList<PhoneInfoItem> list;
     Context context;
-
-    public PhoneInfoAdapter(ArrayList<PhoneInfoItem> list, Context context) {
+    String lang;
+    public PhoneInfoAdapter(ArrayList<PhoneInfoItem> list, Context context, String lang) {
         this.list = list;
         this.context = context;
+        this.lang=lang;
     }
 
     @NonNull
     @Override
     public PhoneInfoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return  new PhoneInfoAdapter.ViewHolder(LayoutInflater.from(context).inflate(R.layout.phone_info_item, parent, false));
+        if(lang.equals("ar"))
+        return  new PhoneInfoAdapter.ViewHolder(LayoutInflater.from(context).inflate(R.layout.ar_phone_info_item, parent, false));
+        else return  new PhoneInfoAdapter.ViewHolder(LayoutInflater.from(context).inflate(R.layout.phone_info_item, parent, false));
     }
 
     @Override

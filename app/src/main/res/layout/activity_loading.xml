@@ -11,6 +11,14 @@
 
 
     tools:context=".Activity.LoadingActivity">
+    <ImageView
+        android:src="@drawable/icon_lang"
+        android:layout_width="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:id="@+id/change_lang_button"
+        android:layout_height="40dp"/>
 
 
         <com.airbnb.lottie.LottieAnimationView
@@ -28,7 +36,7 @@
            android:layout_height="wrap_content"
            android:id="@+id/start_button"
            android:layout_below="@+id/loading_animation"
-           android:text="start"
+           android:text="@string/loadingStart"
 
            android:textColor="@color/white"
            android:layout_marginTop="30dp"

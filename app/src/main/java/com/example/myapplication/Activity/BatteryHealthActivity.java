@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -40,6 +41,7 @@ public class BatteryHealthActivity extends AppCompatActivity {
     BatteryHealthAdapter adapter;
     TextView healthMessage,expectingTime;
     ImageView alertIcon;
+    String lang="";
     private int lastEnergy;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +49,13 @@ public class BatteryHealthActivity extends AppCompatActivity {
         setContentView(R.layout.activity_battery_health);
         SetUpStatusBar();
         Hook();
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        lang=sharedPrefs.getString("lang","");
         ActionToolBar();
         lastEnergy=getIntent().getIntExtra("remainingBattery",0);
         setUpRemainingTime();
         list=new ArrayList<>();
-        adapter=new BatteryHealthAdapter(list,this);
+        adapter=new BatteryHealthAdapter(list,this,lang);
         SetUpList();
         recyclerView.setAdapter(adapter);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
@@ -116,14 +120,14 @@ public class BatteryHealthActivity extends AppCompatActivity {
         long estimated=0;
         //Battery Health
         batteryHealth=batteryStatus.getIntExtra(BatteryManager.EXTRA_HEALTH,batteryHealth);
-        if(batteryHealth==1) health="UNKNOWN";
-        if(batteryHealth==2) health="GOOD";
-        if(batteryHealth==3) health="OVERHEAT";
-        if(batteryHealth==4) health="DEAD";
-        if(batteryHealth==5) health="OVER VOLTAGE";
-        if(batteryHealth==6) health="UNSPECIFIED FAILURE";
+        if(batteryHealth==1) health=getResources().getString(R.string.unknown);
+        if(batteryHealth==2) health=getResources().getString(R.string.good);
+        if(batteryHealth==3) health=getResources().getString(R.string.overheat);
+        if(batteryHealth==4) health=getResources().getString(R.string.dead);
+        if(batteryHealth==5) health=getResources().getString(R.string.overvoltage);
+        if(batteryHealth==6) health=getResources().getString(R.string.unspecified_failer);
         healthMessage.setText(health);
-        if(health.equals("GOOD")) alertIcon.setImageResource(R.drawable.ic_thumb_up_black_24dp);
+        if(health.equals(getResources().getString(R.string.good))) alertIcon.setImageResource(R.drawable.ic_thumb_up_black_24dp);
         else{
             alertIcon.setImageResource(R.drawable.ic_add_alert_black_24dp);
             healthMessage.setTextColor(Color.RED);
@@ -134,11 +138,11 @@ public class BatteryHealthActivity extends AppCompatActivity {
         //Battery Status
         batteryState=batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS,batteryHealth);
         String status="";
-        if(batteryState==1) status="Unknown";
-        if(batteryState==2) status="Charging";
-        if(batteryState==3) status="Discharging";
-        if(batteryState==4) status="Not charging";
-        if(batteryState==5) status="FULL";
+        if(batteryState==1) status=getResources().getString(R.string.unknown);
+        if(batteryState==2) status=getResources().getString(R.string.charging);
+        if(batteryState==3) status=getResources().getString(R.string.discharging);
+        if(batteryState==4) status=getResources().getString(R.string.not_charging);
+        if(batteryState==5) status=getResources().getString(R.string.full);
         //Battery Size
 
         int batteryLevel=0;
@@ -151,12 +155,12 @@ public class BatteryHealthActivity extends AppCompatActivity {
         voltag=batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE,voltag);
         //Battery Temperature
         temperature=batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,temperature);
-        list.add(new BatteryHealthItem("Battery Health",health));
-        list.add(new BatteryHealthItem("Estimated",estimated+"mAh"));
-        list.add(new BatteryHealthItem("Charge state",status));
-        list.add(new BatteryHealthItem("Battery Size",size+"mAh"));
-        list.add(new BatteryHealthItem("Voltage",(float)voltag/1000+"V"));
-        list.add(new BatteryHealthItem("Temperature",temperature/10+""+'\u00B0'+"C"));
+        list.add(new BatteryHealthItem(getResources().getString(R.string.battery_health),health));
+        list.add(new BatteryHealthItem(getResources().getString(R.string.estimated),estimated+"mAh"));
+        list.add(new BatteryHealthItem(getResources().getString(R.string.charge_state),status));
+        list.add(new BatteryHealthItem(getResources().getString(R.string.battery_size),size+"mAh"));
+        list.add(new BatteryHealthItem(getResources().getString(R.string.voltage),(float)voltag/1000+"V"));
+        list.add(new BatteryHealthItem(getResources().getString(R.string.temperature),temperature/10+""+'\u00B0'+"C"));
     }
 
 

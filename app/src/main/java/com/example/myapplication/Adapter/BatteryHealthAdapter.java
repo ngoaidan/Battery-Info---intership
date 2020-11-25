@@ -18,16 +18,20 @@ import java.util.ArrayList;
 public class BatteryHealthAdapter extends RecyclerView.Adapter<BatteryHealthAdapter.ViewHolder> {
     ArrayList<BatteryHealthItem> list;
     Context context;
+    String lang;
 
-    public BatteryHealthAdapter(ArrayList<BatteryHealthItem> list, Context context) {
+    public BatteryHealthAdapter(ArrayList<BatteryHealthItem> list, Context context,String lang) {
         this.list = list;
         this.context = context;
+        this.lang=lang;
     }
 
     @NonNull
     @Override
     public BatteryHealthAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.battery_health_item,parent,false));
+        if(lang.equals("ar"))
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.ar_battery_health_item,parent,false));
+        else return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.battery_health_item,parent,false));
     }
 
     @Override

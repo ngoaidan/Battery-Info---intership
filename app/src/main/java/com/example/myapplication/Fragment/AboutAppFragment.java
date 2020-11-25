@@ -1,8 +1,10 @@
 package com.example.myapplication.Fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +22,13 @@ public class AboutAppFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view= inflater.inflate(R.layout.fragment_about_app,container,false);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String lang=sharedPrefs.getString("lang","");
+        View view;
+        if(lang.equals("ar"))
+            view= inflater.inflate(R.layout.ar_fragment_about_app,container,false);
+        else view=inflater.inflate(R.layout.fragment_about_app,container,false);
+
         tvUpdate=view.findViewById(R.id.tvUpdate);
         tvContact=view.findViewById(R.id.tvContact);
         tvTernOfUse=view.findViewById(R.id.tvTermOfUse);
