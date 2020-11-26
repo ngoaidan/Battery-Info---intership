@@ -46,6 +46,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,7 +88,7 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-         langs=new String[]{"English","Tiếng việt","عربى","Deutsche","España","France","Italiano","日本人","한국어","Português","русский"};
+         langs=new String[]{"English","Tiếng Việt","عربى","Deutsche","España","France","Italiano","日本人","한국어","Português","русский"};
         langCode=new String[]{"en","vi","ar","de","es","fr","it","ja","ko","pt","ru"};
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         loadLocal();
@@ -138,17 +140,44 @@ public class LoadingActivity extends AppCompatActivity {
         changeLang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowDialogLang();
+                ShowLangsDialog();
             }
         });
 
 
+    }
+    private void ShowLangsDialog(){
+        android.app.AlertDialog.Builder  mbuilder;
+
+        mbuilder=new AlertDialog.Builder(LoadingActivity.this,R.style.Theme_AppCompat_Dialog_Alert);
+        View view;
+        view=getLayoutInflater().inflate(R.layout.langs_dialog,null);
+        final RadioGroup radioGroup=view.findViewById(R.id.langRadioGroup);
+        mbuilder.setView(view);
+        final AlertDialog alertDialog=mbuilder.create();
+        ((RadioButton)radioGroup.getChildAt(2)).setChecked(true);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton checkedRadioButton = (RadioButton)radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
+
+                boolean isChecked = checkedRadioButton.isChecked();
+                // If the radiobutton that has changed in check state is now checked...
+                if (isChecked)
+                {
+                    Toast.makeText(LoadingActivity.this, ""+checkedRadioButton.getHint(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        alertDialog.show();
     }
 
     private void ShowDialogLang() {
 
         AlertDialog.Builder mbuilder=new AlertDialog.Builder(LoadingActivity.this);
         mbuilder.setTitle("Choose language");
+
         mbuilder.setSingleChoiceItems(langs, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

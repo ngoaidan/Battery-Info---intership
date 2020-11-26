@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView navigationBar;
     int lastBatteryEnnergy;
     SharedPreferences sharedPrefs;
+    Boolean changeLang=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setStatusBar();
         setContentView(R.layout.activity_main);
         lastBatteryEnnergy=getIntent().getIntExtra("remainingBattery",0);
-
+        changeLang=sharedPrefs.getBoolean("changeLang",false);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
         GetBatteryStat();}
         else GetUsageStatForKitKat();
@@ -58,9 +59,19 @@ public class MainActivity extends AppCompatActivity {
 
         navigationBar=findViewById(R.id.bottom_nav);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if(changeLang==false){
         transaction.replace(R.id.frameContainer, new HomeFragment());
         transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.commit();}
+        else {
+            transaction.replace(R.id.frameContainer, new AboutAppFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+            navigationBar.setSelectedItemId(R.id.about);
+            SharedPreferences.Editor editor=sharedPrefs.edit();
+            editor.putBoolean("changeLang",false);
+            editor.commit();
+        }
         navigationBar.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
@@ -86,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment=new DifferenceFragment();
                     item.setChecked(true);
                     break;
-                case R.id.setting:
+                case R.id.about:
                     fragment=new AboutAppFragment();
                     item.setChecked(true);
                     break;

@@ -62,4 +62,5 @@
     <string name="about">Sobre la aplicacion</string>
     <string name="time_remaining">Se espera que dure</string>
     <string name="abnormal_heat_generation_detected_in_your_phone">Se ha detectado una generación de calor anormal en su teléfono</string>
+    <string name="language">Idioma</string>
 </resources>

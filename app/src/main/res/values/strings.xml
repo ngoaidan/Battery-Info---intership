@@ -60,4 +60,5 @@
     <string name="others">Others</string>
     <string name="about">About</string>
     <string name="time_remaining">It is expected to last for</string>
+    <string name="language">Language</string>
 </resources>

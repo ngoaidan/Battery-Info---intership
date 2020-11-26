@@ -19,7 +19,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="50dp"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content">
@@ -66,9 +66,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:id="@+id/tvUpdate"
-                android:drawableLeft="@drawable/update_icon"
+                android:drawableLeft="@drawable/updateicon"
+                android:layout_gravity="center_vertical"
                 android:drawablePadding="15dp"
                 android:padding="10dp"
                 android:drawableRight="@drawable/next_30dp_ic"
@@ -79,9 +80,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:id="@+id/tvContact"
-                android:drawableLeft="@drawable/contact"
+                android:drawableLeft="@drawable/iconcontact"
                 android:drawablePadding="15dp"
                 android:padding="10dp"
                 android:drawableRight="@drawable/next_30dp_ic"
@@ -92,7 +93,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:drawableLeft="@drawable/term"
                 android:drawablePadding="15dp"
                 android:padding="10dp"
@@ -105,7 +106,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:drawableLeft="@drawable/private_policy"
                 android:drawablePadding="15dp"
                 android:id="@+id/tvPrivacy"
@@ -118,13 +119,26 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:drawableLeft="@drawable/attention"
+                android:textSize="18dp"
+                android:drawableLeft="@drawable/attention_app"
                 android:drawablePadding="15dp"
                 android:padding="10dp"
                 android:id="@+id/tvAttention"
                 android:drawableRight="@drawable/next_30dp_ic"
                 android:text="@string/attention"
+                android:textColor="@color/lightBlue"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:drawableLeft="@drawable/ic_language_30dp"
+                android:drawablePadding="15dp"
+                android:padding="10dp"
+                android:id="@+id/tvLanguage"
+                android:drawableRight="@drawable/next_30dp_ic"
+                android:text="@string/language"
                 android:textColor="@color/lightBlue"
                 android:textStyle="bold"
                 />

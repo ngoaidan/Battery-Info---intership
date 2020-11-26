@@ -62,4 +62,5 @@
     <string name="about">約</string>
     <string name="time_remaining">それは続くと予想されます</string>
     <string name="abnormal_heat_generation_detected_in_your_phone">お使いの携帯電話で異常な発熱が検出されました</string>
+    <string name="language">言語</string>
 </resources>

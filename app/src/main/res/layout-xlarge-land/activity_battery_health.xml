@@ -32,6 +32,8 @@
                 android:text="@string/battery_health"
                 android:textColor="@color/white"
                 android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textSize="18dp"
                 />
             <Button
                 android:layout_width="40dp"

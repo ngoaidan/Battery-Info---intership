@@ -62,4 +62,5 @@
     <string name="about">Около</string>
     <string name="time_remaining">Ожидается, что это продлится</string>
     <string name="abnormal_heat_generation_detected_in_your_phone">На вашем телефоне обнаружено аномальное тепловыделение</string>
+    <string name="language">Язык</string>
 </resources>

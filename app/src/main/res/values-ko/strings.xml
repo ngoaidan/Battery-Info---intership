@@ -62,4 +62,5 @@
     <string name="about">약</string>
     <string name="time_remaining">지속될 것으로 예상됩니다</string>
     <string name="abnormal_heat_generation_detected_in_your_phone">휴대 전화에서 비정상적인 발열이 감지되었습니다.</string>
+    <string name="language">언어</string>
 </resources>

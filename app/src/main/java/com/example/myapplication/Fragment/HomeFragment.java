@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,6 +61,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 
 import static maes.tech.intentanim.CustomIntent.customType;
@@ -76,7 +78,7 @@ public class HomeFragment extends Fragment {
   private  boolean returnFragment=false;
   String lang="";
 
-
+  SharedPreferences sharedPrefs;
 
 
   @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -84,7 +86,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
       super.onCreateView(inflater, container, savedInstanceState);
-    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    loadLocal();
     lang=sharedPrefs.getString("lang","");
     View view;
     if(lang.equals("ar"))
@@ -121,6 +124,23 @@ public class HomeFragment extends Fragment {
       return view;
     }
 
+  private void loadLocal(){
+    String lang=sharedPrefs.getString("lang","");
+
+
+    if(lang!=null)
+      setLocale(lang);
+  }
+  private void setLocale(String lang) {
+    Locale locale= new Locale(lang);
+    Locale.setDefault(locale);
+    Configuration configuration=new Configuration();
+    configuration.locale=locale ;
+    getActivity().getBaseContext().getResources().updateConfiguration(configuration,getActivity().getBaseContext().getResources().getDisplayMetrics());
+    SharedPreferences.Editor editor=sharedPrefs.edit();
+    editor.putString("lang",lang);
+    editor.commit();
+  }
 
   public static Map<String, String> getCPUInfo () throws IOException {
 
@@ -212,6 +232,7 @@ public class HomeFragment extends Fragment {
     }
 
   }
+
 
   private void AddItemToList() {
     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());

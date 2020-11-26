@@ -74,12 +74,14 @@ public class DifferenceFragment extends Fragment {
     String lang="";
     StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
     StorageManager mStorageManager;
+    SharedPreferences sharedPrefs;
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+         loadLocal();
         lang=sharedPrefs.getString("lang","");
         View view;
         if(lang.equals("ar"))
@@ -113,7 +115,31 @@ public class DifferenceFragment extends Fragment {
 
         return view;
     }
+    private void setLocale(String lang) {
+        Locale locale= new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration configuration=new Configuration();
+        configuration.locale=locale ;
+        getActivity().getBaseContext().getResources().updateConfiguration(configuration,getActivity().getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor=sharedPrefs.edit();
+        editor.putString("lang",lang);
+        editor.commit();
+    }
 
+    private boolean isLanguageInList(String[] list, String locale) {
+        if (list == null) {
+            return false;
+        }
+        for(int i=0;i<list.length;i++){
+            if(list[i].equals(locale)) return true;
+        }
+        return false;
+    }
+    private void loadLocal(){
+        String lang=sharedPrefs.getString("lang","");
+
+            setLocale(lang);
+    }
 
     private String GetAndroidVersion() {
         String versionRelease = Build.VERSION.RELEASE;

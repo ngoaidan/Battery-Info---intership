@@ -62,4 +62,5 @@
     <string name="about">Ứng dụng</string>
     <string name="time_remaining">Thời gian ước tính</string>
     <string name="abnormal_heat_generation_detected_in_your_phone">Đã phát hiện thấy sự sinh nhiệt bất thường trên điện thoại của bạn</string>
+    <string name="language">Ngôn ngữ</string>
 </resources>

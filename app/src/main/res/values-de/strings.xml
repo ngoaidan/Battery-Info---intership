@@ -61,4 +61,5 @@
     <string name="about">Über App</string>
     <string name="abnormal_heat_generation_detected_in_your_phone">In Ihrem Telefon wurde eine abnormale Wärmeentwicklung festgestellt</string>
     <string name="time_remaining">Es wird erwartet, dass es dauert</string>
+    <string name="language">Sprache</string>
 </resources>
