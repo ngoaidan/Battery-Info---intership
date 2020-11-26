@@ -17,6 +17,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
+        android:visibility="gone"
         android:id="@+id/change_lang_button"
         android:layout_height="40dp"/>
 
