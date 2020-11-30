@@ -13,7 +13,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    android:paddingTop="30dp"
+    android:paddingTop="20dp"
 
     android:background="#131313">
 
@@ -24,10 +24,11 @@
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:text="@string/app_name"
             android:textColor="#fff"
+            android:layout_centerVertical="true"
             android:maxLines="1"
             android:ellipsize="end"
             android:layout_toLeftOf="@+id/free_ad_btn"
@@ -40,6 +41,7 @@
             android:text="@string/free_ad"
             android:background="@drawable/custom_buttom"
             android:textColor="#fff"
+
             android:id="@+id/free_ad_btn"
             android:layout_alignParentEnd="true"
             />
@@ -149,7 +151,10 @@
                 android:text="50%"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
                 android:layout_height="wrap_content"
                 android:text="@string/power_save"
                 android:textColor="@color/white"

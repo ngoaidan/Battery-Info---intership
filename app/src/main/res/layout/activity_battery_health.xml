@@ -102,13 +102,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="10dp"
-                android:layout_gravity="center"
-                android:gravity="center"
+
+
                 >
                 <TextView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:text="\!"
+
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:layout_gravity="center"
@@ -116,16 +117,17 @@
                     android:background="@drawable/question_button_background"
                     />
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:text="@string/battery_health_alert"
                     android:textColor="@color/white"
                     android:textSize="15dp"
-
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_marginTop="5dp"
-                    android:drawablePadding="5dp"
+
                     />
 
             </LinearLayout>

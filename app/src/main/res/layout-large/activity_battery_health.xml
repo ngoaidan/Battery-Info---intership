@@ -10,11 +10,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/colorBackground"
         >
         <androidx.appcompat.widget.Toolbar
+            android:textSize="20dp"
             android:layout_width="match_parent"
             android:layout_height="85dp"
             android:paddingTop="30dp"
@@ -30,6 +32,8 @@
                 android:text="@string/battery_health"
                 android:textColor="@color/white"
                 android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textSize="18dp"
                 />
             <Button
                 android:layout_width="40dp"
